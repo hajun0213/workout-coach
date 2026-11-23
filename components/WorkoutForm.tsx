@@ -16,6 +16,7 @@ import {
 import {
   ErrorText,
   LevelPicker,
+  SportLabel,
   fieldBad,
   fieldClass,
   fieldOk,
@@ -159,9 +160,11 @@ export default function WorkoutForm() {
         </div>
 
         <div>
-          <span id="sport-label" className="text-sm font-medium text-ink/80">
-            종목
-          </span>
+          <SportLabel
+            id="sport-label"
+            hasValue={sport !== ""}
+            onClear={() => setSport("")}
+          />
           <SportSelect
             value={sport}
             onChange={(next) => {
@@ -203,6 +206,7 @@ export default function WorkoutForm() {
             setIntensity(level);
             clearError("intensity");
           }}
+          onClear={() => setIntensity(null)}
         />
         <LevelPicker
           legend="컨디션"
@@ -214,6 +218,7 @@ export default function WorkoutForm() {
             setCondition(level);
             clearError("condition");
           }}
+          onClear={() => setCondition(null)}
         />
       </div>
 

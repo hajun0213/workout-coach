@@ -29,6 +29,7 @@ export function LevelPicker({
   value,
   error,
   onChange,
+  onClear,
 }: {
   legend: string;
   hint: string;
@@ -36,6 +37,8 @@ export function LevelPicker({
   value: Level | null;
   error?: string;
   onChange: (level: Level) => void;
+  /** 고른 값을 취소한다. (고른 버튼을 다시 누르거나 "선택 취소"를 누를 때) */
+  onClear: () => void;
 }) {
   const errorId = `${name}-error`;
   return (
@@ -55,11 +58,17 @@ export function LevelPicker({
               value={level}
               checked={value === level}
               onChange={() => onChange(level)}
+              // 이미 고른 버튼을 다시 누르면 선택을 취소한다.
+              onClick={() => {
+                if (value === level) onClear();
+              }}
               className="peer sr-only"
             />
             <span
               className={`flex size-12 items-center justify-center rounded-xl text-base font-medium transition-colors peer-checked:bg-chip peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-accent/60 ${
-                error ? "bg-red-50 hover:bg-red-100" : "bg-ink/5 hover:bg-ink/10"
+                error
+                  ? "bg-red-50 hover:bg-red-100"
+                  : "bg-ink/5 hover:bg-ink/10"
               }`}
             >
               {level}
@@ -67,9 +76,47 @@ export function LevelPicker({
           </label>
         ))}
       </div>
-      <p className="mt-2 text-sm text-ink/50">{hint}</p>
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="text-sm text-ink/50">{hint}</p>
+        {value !== null && (
+          <button
+            type="button"
+            onClick={onClear}
+            className="shrink-0 text-sm text-ink/50 underline-offset-4 hover:text-ink hover:underline"
+          >
+            선택 취소
+          </button>
+        )}
+      </div>
       <ErrorText id={errorId} message={error} />
     </fieldset>
   );
 }
 
+/** 종목 칸의 이름표 줄. 종목을 골랐다면 오른쪽에 "선택 취소"가 보인다. */
+export function SportLabel({
+  id,
+  hasValue,
+  onClear,
+}: {
+  id: string;
+  hasValue: boolean;
+  onClear: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span id={id} className="text-sm font-medium text-ink/80">
+        종목
+      </span>
+      {hasValue && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-sm text-ink/50 underline-offset-4 hover:text-ink hover:underline"
+        >
+          선택 취소
+        </button>
+      )}
+    </div>
+  );
+}

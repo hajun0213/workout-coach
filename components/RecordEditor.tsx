@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import {
   ErrorText,
   LevelPicker,
+  SportLabel,
   fieldBad,
   fieldClass,
   fieldOk,
@@ -137,12 +138,11 @@ export default function RecordEditor({
           />
         </div>
         <div>
-          <span
+          <SportLabel
             id={`edit-${record.id}-sport-label`}
-            className="text-sm font-medium text-ink/80"
-          >
-            종목
-          </span>
+            hasValue={sport !== ""}
+            onClear={() => setSport("")}
+          />
           <SportSelect
             value={sport}
             onChange={(next) => {
@@ -182,6 +182,7 @@ export default function RecordEditor({
             setIntensity(level);
             clearError("intensity");
           }}
+          onClear={() => setIntensity(null)}
         />
         <LevelPicker
           legend="컨디션"
@@ -193,6 +194,7 @@ export default function RecordEditor({
             setCondition(level);
             clearError("condition");
           }}
+          onClear={() => setCondition(null)}
         />
       </div>
 
