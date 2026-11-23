@@ -1,28 +1,94 @@
 @import "tailwindcss";
 
+/* 디자인 토큰 — Glaze 디자인 참고안에서 어울리는 색만 가져옴 (DESIGN.md §3.5) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #111418; /* 글자 */
+  --page: #f4f7fb; /* 페이지 바탕 */
+  --pill: rgba(234, 239, 246, 0.82); /* 알약형 헤더 */
+  --panel: #12151b; /* 짙은 패널 (AI 결과 카드 등) */
+  --chip: #16191f; /* 어두운 버튼 */
+  --chip-hover: #2b3140;
+  --accent: #ff5512; /* 포인트(주황): 운동의 활력 */
+  --cobalt: #1430e0; /* 보조 포인트(코발트) */
+
+  --background: var(--page);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* 한글이 잘 보이는 시스템 글꼴 (별도 글꼴 내려받기 없음) */
+  --color-ink: var(--ink);
+  --color-pill: var(--pill);
+  --color-panel: var(--panel);
+  --color-chip: var(--chip);
+  --color-chip-hover: var(--chip-hover);
+  --color-accent: var(--accent);
+  --color-cobalt: var(--cobalt);
+  /* 영문은 Inter Tight, 한글은 시스템 글꼴 (한글 웹폰트 내려받기 없음) */
   --font-sans:
-    "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui,
-    sans-serif;
+    var(--font-inter-tight), "Apple SD Gothic Neo", "Malgun Gothic",
+    "Noto Sans KR", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 연한 푸른 회색 그라데이션이 첫 화면 높이만큼 깔리고, 그 아래는 페이지 색 */
 body {
-  background: var(--background);
+  background-color: var(--page);
+  background-image: linear-gradient(
+    to bottom,
+    #dbe3ee 0%,
+    #eef2f8 62%,
+    #f4f7fb 100%
+  );
+  background-size: 100% 100vh;
+  background-repeat: no-repeat;
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+/* 어두운 칩 버튼: 마우스를 올리면 살짝 커지며 튕기는 느낌 */
+.btn-chip {
+  background: var(--chip);
+  color: #fafafa;
+  transition:
+    transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1),
+    background-color 0.3s;
+}
+.btn-chip:hover {
+  background: var(--chip-hover);
+  transform: scale(1.05);
+}
+
+/* 처음 나타날 때 아래에서 부드럽게 올라오는 모션 */
+@keyframes rise-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.rise-in {
+  animation: rise-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.rise-in-2 {
+  animation-delay: 0.15s;
+}
+.rise-in-3 {
+  animation-delay: 0.3s;
+}
+
+/* 움직임을 줄이는 설정을 켠 사용자는 모션 없이 바로 보여 줌 */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+  .btn-chip {
+    transition: none;
+  }
+  .btn-chip:hover {
+    transform: none;
+  }
 }
