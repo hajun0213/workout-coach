@@ -4,6 +4,7 @@
 :root {
   --ink: #111418; /* 글자 */
   --page: #f4f7fb; /* 페이지 바탕 */
+  --surface: #ffffff; /* 카드·입력 칸 바탕 (다크 모드에서 바뀐다) */
   --pill: rgba(234, 239, 246, 0.82); /* 알약형 헤더 */
   --panel: #12151b; /* 짙은 패널 (AI 결과 카드 등) */
   --chip: #16191f; /* 어두운 버튼 */
@@ -21,6 +22,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-ink: var(--ink);
+  --color-surface: var(--surface);
   --color-pill: var(--pill);
   --color-panel: var(--panel);
   --color-chip: var(--chip);
