@@ -14,6 +14,46 @@ export function errorResponse(status: number, code: string, message: string) {
   );
 }
 
+// ── 호출 횟수 제한 (같은 IP가 1분에 너무 많이 부르는 것을 막는다) ──
+// 서버 메모리에만 기록하는 "최소한의" 제한이다. 서버리스 환경(Vercel)에서는 서버 인스턴스마다 따로 세기 때문에
+// 완전하지 않다. 그래서 배포할 때 Vercel 방화벽의 호출 횟수 제한을 함께 설정한다. (PLAN 19번)
+// IP를 알 수 없으면(로컬 개발 등) 제한하지 않는다. Vercel에서는 항상 IP 헤더가 붙는다.
+export const RATE_WINDOW_MS = 60_000;
+export const DEFAULT_RATE_LIMIT = 20; // 1분에 IP당 AI API 호출 수 (API 종류별로 따로 센다)
+const MAX_TRACKED_KEYS = 5_000;
+const hits = new Map<string, number[]>();
+
+/** 이 키의 호출이 한도를 넘었는지 확인하고, 넘지 않았다면 이번 호출을 기록한다. 넘었으면 true. */
+export function isRateLimited(
+  key: string,
+  limit: number,
+  now: number = Date.now(),
+): boolean {
+  const recent = (hits.get(key) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= limit) {
+    hits.set(key, recent);
+    return true;
+  }
+  recent.push(now);
+  hits.set(key, recent);
+  if (hits.size > MAX_TRACKED_KEYS) {
+    // 메모리가 계속 늘지 않게 오래된 키를 정리한다.
+    for (const [k, times] of hits) {
+      if (times.every((t) => now - t >= RATE_WINDOW_MS)) hits.delete(k);
+    }
+  }
+  return false;
+}
+
+/** 요청을 보낸 IP. 플랫폼이 붙여 주는 헤더만 믿고, 없으면 null. */
+export function clientIp(request: Request): string | null {
+  const forwarded = request.headers.get("x-forwarded-for");
+  const ip =
+    forwarded?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip")?.trim();
+  return ip ? ip.slice(0, 64) : null;
+}
+
 const invalidRequest = (message: string) =>
   errorResponse(400, "VALIDATION_ERROR", message);
 
@@ -89,11 +129,30 @@ export async function handleAiPost<TReq, TRes>(
     tag: string;
     /** AI를 기다리는 최대 시간(ms). 정하지 않으면 8초 (PRD: 서버는 8초까지만 기다린다) */
     timeoutMs?: number;
+    /** 1분에 IP당 호출 한도. 정하지 않으면 20회 */
+    rateLimitPerMinute?: number;
     run: (data: TReq, signal: AbortSignal) => Promise<TRes>;
   },
 ): Promise<Response> {
   const foreign = rejectForeignRequest(request);
   if (foreign) return foreign;
+
+  const ip = clientIp(request);
+  if (
+    ip !== null &&
+    isRateLimited(
+      `${options.tag}:${ip}`,
+      options.rateLimitPerMinute ?? DEFAULT_RATE_LIMIT,
+    )
+  ) {
+    const response = errorResponse(
+      429,
+      "RATE_LIMITED",
+      "요청이 너무 많아요. 잠시 뒤 다시 시도해 주세요",
+    );
+    response.headers.set("Retry-After", "60");
+    return response;
+  }
 
   const bodyText = await readBodyWithLimit(request, options.maxBytes);
   if (bodyText === null) return invalidRequest("요청이 너무 커요");

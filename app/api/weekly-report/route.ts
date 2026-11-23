@@ -22,6 +22,7 @@ export function POST(request: Request) {
       schema: weeklyReportRequestSchema,
       tag: "weekly-report",
       timeoutMs: WEEKLY_TIMEOUT_MS,
+      rateLimitPerMinute: 5, // 가장 비싼 API라 더 엄격하게
       run: async (data, signal) => {
         const reply = await requestWeeklyReport(data, signal);
         const safe = applyWeeklySafety(reply, data);
