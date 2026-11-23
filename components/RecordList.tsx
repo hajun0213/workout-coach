@@ -15,7 +15,10 @@ import type { Workout } from "@/types/workout";
 
 // Design Ref: §3.3, §3.4 — 화면 2의 기록 목록. 최신순, 항목마다 삭제 버튼, 전체 삭제(확인 창 포함),
 // 분석 결과가 있으면 보기, 기록이 없으면 "아직 기록이 없어요".
-// 다음 작업에서 붙일 것: 종목 필터(N2).
+// N2: 종목 필터(16번). 그래프는 전체 기록 기준이고, 필터는 아래 목록에만 적용된다.
+
+// 종목 필터의 "전체" 값. (종목 이름은 최대 20자라 이 값과 겹칠 일이 거의 없고, 겹쳐도 "전체"로 동작한다)
+const ALL_SPORTS = "__all__";
 
 // 저장 시각(ISO)을 브라우저의 시간대 기준 "2026-11-23 18:30"으로 보여 준다. (§4.1)
 function formatDate(iso: string): string {
@@ -100,6 +103,7 @@ export default function RecordList() {
     () => null,
   );
   const [error, setError] = useState<string | null>(null);
+  const [sportFilter, setSportFilter] = useState(ALL_SPORTS);
 
   function handleDelete(record: Workout) {
     setError(null);
@@ -145,12 +149,41 @@ export default function RecordList() {
   }
 
   // 저장된 순서는 오래된 것 → 최신이라, 목록에서는 뒤집어 최신순으로 보여 준다.
-  const newestFirst = [...records].reverse();
+  // 필터 선택지는 저장된 기록에 실제로 있는 종목만 (처음 나온 순서). 고른 종목의 기록이 모두 삭제되면 "전체"로 돌아간다.
+  const sports = [...new Set(records.map((record) => record.sport))];
+  const activeFilter = sports.includes(sportFilter) ? sportFilter : ALL_SPORTS;
+  const filtered =
+    activeFilter === ALL_SPORTS
+      ? records
+      : records.filter((record) => record.sport === activeFilter);
+  const newestFirst = [...filtered].reverse();
 
   return (
     <div>
       <WeeklyChart records={records} />
-      <p className="mt-8 text-sm text-ink/50">총 {records.length}건 · 최신순</p>
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-ink/50">
+          {activeFilter === ALL_SPORTS
+            ? `총 ${records.length}건`
+            : `${activeFilter} ${filtered.length}건 (전체 ${records.length}건)`}{" "}
+          · 최신순
+        </p>
+        <label className="flex items-center gap-2 text-sm text-ink/70">
+          종목 필터
+          <select
+            value={activeFilter}
+            onChange={(event) => setSportFilter(event.target.value)}
+            className="h-10 rounded-xl border border-ink/10 bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          >
+            <option value={ALL_SPORTS}>전체</option>
+            {sports.map((sport) => (
+              <option key={sport} value={sport}>
+                {sport}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       {error && (
         <p role="alert" className="mt-3 text-sm font-medium text-red-600">
           {error}
