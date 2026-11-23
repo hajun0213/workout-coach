@@ -5,7 +5,7 @@ import type { Workout } from "@/types/workout";
 export default function CoachPanel({ record }: { record: Workout & { coach: NonNullable<Workout["coach"]> } }) {
   const { coach } = record;
   return (
-    <div className="rounded-2xl bg-panel p-6 text-white">
+    <div className="rounded-2xl bg-panel p-5 text-white sm:p-6">
       <p className="text-base leading-relaxed text-white/90">{coach.feedback}</p>
       <p className="mt-5 text-sm text-white/50">다음 운동 계획</p>
       <p className="mt-1 text-lg font-semibold">

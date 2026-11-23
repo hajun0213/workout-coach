@@ -18,19 +18,19 @@ export const metadata: Metadata = {
 };
 
 // Design Ref: §3.1, §3.5 — 공통 틀. 양 끝에 떠 있는 알약형 헤더 2개(로고 / 메뉴) + 본문.
-// PC 웹 화면(본문 최대 너비 max-w-5xl = 약 1024px)을 기준으로 만든다. (§1.1)
+// PC 웹 화면(본문 최대 너비 max-w-5xl = 약 1024px)을 기준으로 만들고, 휴대폰(sm 미만)에서는 여백·헤더 크기를 줄인다. (§1.1, N3)
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className={`${interTight.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <header className="relative z-20">
-          <div className="mx-auto flex w-full max-w-5xl items-start justify-between px-6 pt-6">
+          <div className="mx-auto flex w-full max-w-5xl items-start justify-between gap-2 px-4 pt-4 sm:px-6 sm:pt-6">
             <Link
               href="/"
               aria-label="오늘의 운동 코치 홈"
-              className="flex h-14 items-center gap-2 rounded-2xl bg-pill px-5 backdrop-blur-[14px]"
+              className="flex h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-pill px-4 backdrop-blur-[14px] sm:h-14 sm:px-5"
             >
-              <span className="text-lg font-semibold tracking-tight">
+              <span className="text-base font-semibold tracking-tight sm:text-lg">
                 오늘의 운동 코치
               </span>
               <span
@@ -41,11 +41,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <MainNav />
           </div>
         </header>
-        <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 pt-20">
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-12 sm:px-6 sm:pt-20">
           {children}
         </main>
         {/* Design Ref: §3.1 — 모든 화면 아래에 항상 보이는 안내 문구 (PRD §7: 기록 보관 안내, AI 조언 안내) */}
-        <footer className="mx-auto w-full max-w-5xl px-6 pb-10">
+        <footer className="mx-auto w-full max-w-5xl px-4 pb-10 sm:px-6">
           <div className="rounded-2xl bg-pill px-6 py-4 text-sm leading-relaxed text-ink/60 backdrop-blur-[14px]">
             <p className="flex items-start gap-2">
               <span
