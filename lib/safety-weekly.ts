@@ -2,6 +2,7 @@ import type { z } from "zod";
 import {
   BROKEN_TEXT,
   PAIN_NOTICE,
+  capLength,
   isUsablePlan,
   truncateSentences,
 } from "@/lib/safety";
@@ -15,6 +16,14 @@ import type { Level, WeeklyPlanDay, WeeklyReport } from "@/types/workout";
 // 주간 리포트 안전 규칙 — AI 답을 믿지 않고 서버가 다시 적용한다. (Design §5.1, PRD §7)
 export const MAX_REPORT_SUMMARY_SENTENCES = 4;
 export const MAX_REPORT_TIPS = 3;
+export const MAX_REPORT_SUMMARY_CHARS = 600;
+export const MAX_REPORT_TIP_CHARS = 120;
+/** 하루 운동 시간의 상한(분) */
+export const MAX_DAY_MINUTES = 180;
+export const WEEKLY_TIME_NOTICE =
+  "하루 운동 시간이 너무 길어서 180분으로 줄였어요.";
+export const WEEKLY_DAYS_NOTICE =
+  "운동하는 날이 너무 많아서 주간 목표에 맞춰 일부를 쉬는 날로 바꿨어요.";
 export const WEEKLY_REST_NOTICE =
   "쉬는 날이 없어서 마지막 날을 휴식으로 바꿨어요.";
 export const WEEKLY_HARD_NOTICE =
@@ -51,7 +60,8 @@ export function applyWeeklySafety(
   if (!summary || BROKEN_TEXT.test(summary)) return null;
   const tips = reply.tips
     .filter((tip) => !BROKEN_TEXT.test(tip))
-    .slice(0, MAX_REPORT_TIPS);
+    .slice(0, MAX_REPORT_TIPS)
+    .map((tip) => capLength(truncateSentences(tip, 1), MAX_REPORT_TIP_CHARS));
 
   // 7일이 월~일 한 번씩 있어야 한다.
   const byDay = new Map(reply.plan.map((entry) => [entry.day, entry]));
@@ -93,10 +103,34 @@ export function applyWeeklySafety(
     return false;
   };
 
-  // 쉬는 날 보장
-  if (plan.every((day) => day.sport !== null)) {
-    plan[6] = REST_DAY("일");
-    notices.push(WEEKLY_REST_NOTICE);
+  // 하루 시간 상한
+  let timeChanged = false;
+  for (const day of plan) {
+    if (day.sport !== null && day.minutes > MAX_DAY_MINUTES) {
+      day.minutes = MAX_DAY_MINUTES;
+      timeChanged = true;
+    }
+  }
+  if (timeChanged) notices.push(WEEKLY_TIME_NOTICE);
+
+  // 운동하는 날 수 상한: 주간 목표 + 1일(최대 6일). 지난주에 5일 이상 운동했다면 쉬는 날을 최소 2일 둔다.
+  const lastWeek = request.weekly.find((w) => w.weeksAgo === 1);
+  const minRest = lastWeek && lastWeek.count >= 5 ? 2 : 1;
+  const maxWorkoutDays = Math.min(request.weeklyGoal + 1, 6, 7 - minRest);
+  let workoutDays = plan.filter((day) => day.sport !== null).length;
+  if (workoutDays > maxWorkoutDays) {
+    // 뒤쪽 날부터 쉬는 날로 바꾼다.
+    for (let i = plan.length - 1; i >= 0 && workoutDays > maxWorkoutDays; i--) {
+      if (plan[i].sport !== null) {
+        plan[i] = REST_DAY(plan[i].day);
+        workoutDays--;
+      }
+    }
+    notices.push(
+      plan.every((d) => d.sport !== null)
+        ? WEEKLY_REST_NOTICE
+        : WEEKLY_DAYS_NOTICE,
+    );
   }
 
   // 최근 상태가 좋지 않으면 전체를 가볍게

@@ -70,3 +70,11 @@ export function hasAnyValue(fill: QuickFill): boolean {
     fill.pain !== null
   );
 }
+
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+const PHONE = /(?<!\d)0\d{1,2}[-.\s]?\d{3,4}[-.\s]?\d{4}(?!\d)/g;
+
+/** AI로 보내기 전에 문장 속 이메일·전화번호 모양을 가린다. (이름 같은 것은 알아낼 수 없어 화면 안내로 막는다) */
+export function maskPersonalInfo(text: string): string {
+  return text.replace(EMAIL, "[이메일]").replace(PHONE, "[번호]");
+}

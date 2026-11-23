@@ -1,3 +1,4 @@
+import "server-only";
 import OpenAI from "openai";
 import { coachAiReplySchema } from "@/lib/schema";
 import type { ZodType } from "zod";

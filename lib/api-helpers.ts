@@ -48,6 +48,38 @@ export async function readBodyWithLimit(
  * 크기 상한 → JSON → 모양 검사 → AI 호출(8초 제한, 접속이 끊기면 같이 중단) → 실패는 통일된 응답.
  * @param run 검사를 통과한 요청으로 AI를 부르고 응답 본문을 돌려준다. 쓸 수 없는 답이면 AiFailure("format")를 던진다.
  */
+/**
+ * 이 사이트 화면에서 보낸 JSON 요청인지 확인한다. 아니면 거절 응답을 돌려주고, 통과하면 null.
+ * 다른 사이트가 방문자의 브라우저로 몰래 보낸 요청(비용 남용)을 줄이기 위한 것이다.
+ *   · Content-Type이 application/json이어야 한다. (text/plain 같은 "단순 요청"은 사전 확인 없이 브라우저가 보낼 수 있다)
+ *   · 브라우저가 알려 주는 Sec-Fetch-Site가 same-origin이 아니거나, Origin의 주소가 이 서버 주소와 다르면 거절한다.
+ *   · 이 검사는 브라우저가 아닌 도구(curl 등)가 직접 보내는 요청은 막지 못한다. 그것은 호출 횟수 제한(배포 설정)으로 막는다.
+ */
+export function rejectForeignRequest(request: Request): Response | null {
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().startsWith("application/json")) {
+    return invalidRequest("요청 형식이 올바르지 않아요");
+  }
+  const site = request.headers.get("sec-fetch-site");
+  if (site !== null && site !== "same-origin" && site !== "none") {
+    return errorResponse(403, "FORBIDDEN", "허용되지 않은 요청이에요");
+  }
+  const origin = request.headers.get("origin");
+  if (origin !== null) {
+    let originHost = "";
+    try {
+      originHost = new URL(origin).host;
+    } catch {
+      originHost = "";
+    }
+    const host = request.headers.get("host") ?? new URL(request.url).host;
+    if (originHost !== host) {
+      return errorResponse(403, "FORBIDDEN", "허용되지 않은 요청이에요");
+    }
+  }
+  return null;
+}
+
 export async function handleAiPost<TReq, TRes>(
   request: Request,
   options: {
@@ -60,6 +92,9 @@ export async function handleAiPost<TReq, TRes>(
     run: (data: TReq, signal: AbortSignal) => Promise<TRes>;
   },
 ): Promise<Response> {
+  const foreign = rejectForeignRequest(request);
+  if (foreign) return foreign;
+
   const bodyText = await readBodyWithLimit(request, options.maxBytes);
   if (bodyText === null) return invalidRequest("요청이 너무 커요");
 
