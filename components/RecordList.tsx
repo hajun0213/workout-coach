@@ -15,6 +15,7 @@ import GoalCard from "@/components/GoalCard";
 import StatsPanel from "@/components/StatsPanel";
 import WeeklyChart from "@/components/WeeklyChart";
 import RetryAnalysis from "@/components/RetryAnalysis";
+import { sportIcon } from "@/lib/sport-icons";
 import type { Workout } from "@/types/workout";
 
 // Design Ref: §3.3, §3.4 — 화면 2의 기록 목록. 최신순, 항목마다 삭제 버튼, 전체 삭제(확인 창 포함),
@@ -65,6 +66,7 @@ function RecordCard({
         <div>
           <p className="text-sm text-ink/50">{formatDate(record.date)}</p>
           <p className="mt-1 text-xl font-semibold tracking-tight">
+            <span aria-hidden="true">{sportIcon(record.sport)}</span>{" "}
             {record.sport} {record.minutes}분
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -213,7 +215,7 @@ export default function RecordList() {
               <option value={ALL_SPORTS}>전체</option>
               {sports.map((sport) => (
                 <option key={sport} value={sport}>
-                  {sport}
+                  {sportIcon(sport)} {sport}
                 </option>
               ))}
             </select>

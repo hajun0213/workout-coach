@@ -9,6 +9,7 @@ import {
   fieldOk,
 } from "@/components/form-parts";
 import { MAX_SPORT_LENGTH, OTHER_SPORT, SPORT_OPTIONS } from "@/lib/schema";
+import SportSelect from "@/components/SportSelect";
 import { updateRecord } from "@/lib/storage";
 import {
   validateWorkoutForm,
@@ -115,7 +116,9 @@ export default function RecordEditor({
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className="block">
-            <span className="text-sm font-medium text-ink/80">운동 시간(분)</span>
+            <span className="text-sm font-medium text-ink/80">
+              운동 시간(분)
+            </span>
             <input
               type="number"
               inputMode="numeric"
@@ -128,27 +131,27 @@ export default function RecordEditor({
               className={`${fieldClass} ${errors.minutes ? fieldBad : fieldOk} mt-2`}
             />
           </label>
-          <ErrorText id={`edit-${record.id}-minutes`} message={errors.minutes} />
+          <ErrorText
+            id={`edit-${record.id}-minutes`}
+            message={errors.minutes}
+          />
         </div>
         <div>
-          <label className="block">
-            <span className="text-sm font-medium text-ink/80">종목</span>
-            <select
-              value={sport}
-              onChange={(event) => {
-                setSport(event.target.value);
-                clearError("sport");
-              }}
-              aria-invalid={sportBad ? true : undefined}
-              className={`${fieldClass} ${sportBad ? fieldBad : fieldOk} mt-2`}
-            >
-              {SPORT_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
+          <span
+            id={`edit-${record.id}-sport-label`}
+            className="text-sm font-medium text-ink/80"
+          >
+            종목
+          </span>
+          <SportSelect
+            value={sport}
+            onChange={(next) => {
+              setSport(next);
+              clearError("sport");
+            }}
+            labelledBy={`edit-${record.id}-sport-label`}
+            invalid={Boolean(sportBad)}
+          />
           {sport === OTHER_SPORT && (
             <input
               type="text"

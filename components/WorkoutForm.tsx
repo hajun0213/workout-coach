@@ -3,14 +3,11 @@
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import CoachPanel from "@/components/CoachPanel";
+import SportSelect from "@/components/SportSelect";
 import RetryAnalysis from "@/components/RetryAnalysis";
 import { analyzeRecord } from "@/lib/coach-client";
 import { addRecord, getRecordsSnapshot, subscribeRecords } from "@/lib/storage";
-import {
-  MAX_SPORT_LENGTH,
-  OTHER_SPORT,
-  SPORT_OPTIONS,
-} from "@/lib/schema";
+import { MAX_SPORT_LENGTH, OTHER_SPORT } from "@/lib/schema";
 import {
   validateWorkoutForm,
   type FieldErrors,
@@ -41,7 +38,9 @@ export default function WorkoutForm() {
   const [pain, setPain] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   // 저장·분석 진행 상태. 분석 중에는 버튼을 막아 같은 기록을 두 번 보내지 않게 한다.
-  const [phase, setPhase] = useState<"idle" | "analyzing" | "done" | "failed">("idle");
+  const [phase, setPhase] = useState<"idle" | "analyzing" | "done" | "failed">(
+    "idle",
+  );
   const [savedId, setSavedId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   // 결과는 저장된 기록에서 읽는다. (새로고침해도 기록 목록에서 같은 결과를 볼 수 있다)
@@ -124,7 +123,9 @@ export default function WorkoutForm() {
 
     // 2) AI 분석 → 결과를 기록에 저장. 실패해도 기록은 남는다.
     setPhase("analyzing");
-    void analyzeRecord(record.id).then((ok) => setPhase(ok ? "done" : "failed"));
+    void analyzeRecord(record.id).then((ok) =>
+      setPhase(ok ? "done" : "failed"),
+    );
   }
 
   return (
@@ -158,28 +159,19 @@ export default function WorkoutForm() {
         </div>
 
         <div>
-          <label className="block">
-            <span className="text-sm font-medium text-ink/80">종목</span>
-            <select
-              value={sport}
-              onChange={(event) => {
-                setSport(event.target.value);
-                clearError("sport");
-              }}
-              aria-invalid={errors.sport && sport !== OTHER_SPORT ? true : undefined}
-              aria-describedby={errors.sport ? "sport-error" : undefined}
-              className={`${fieldClass} ${errors.sport && sport !== OTHER_SPORT ? fieldBad : fieldOk} mt-2`}
-            >
-              <option value="" disabled>
-                종목을 선택하세요
-              </option>
-              {SPORT_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
+          <span id="sport-label" className="text-sm font-medium text-ink/80">
+            종목
+          </span>
+          <SportSelect
+            value={sport}
+            onChange={(next) => {
+              setSport(next);
+              clearError("sport");
+            }}
+            labelledBy="sport-label"
+            invalid={Boolean(errors.sport) && sport !== OTHER_SPORT}
+            describedBy={errors.sport ? "sport-error" : undefined}
+          />
           {sport === OTHER_SPORT && (
             <input
               type="text"

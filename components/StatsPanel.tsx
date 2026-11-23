@@ -1,4 +1,5 @@
 import { personalRecords, sportStats } from "@/lib/stats";
+import { sportIcon } from "@/lib/sport-icons";
 import type { Workout } from "@/types/workout";
 
 // 추가 기능 — 종목별 통계와 개인 기록. 지금까지 저장된 모든 기록 기준이다.
@@ -61,7 +62,9 @@ export default function StatsPanel({ records }: { records: Workout[] }) {
         {stats.map((s) => (
           <li key={s.sport}>
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 text-sm">
-              <span className="font-medium">{s.sport}</span>
+              <span className="font-medium">
+                <span aria-hidden="true">{sportIcon(s.sport)}</span> {s.sport}
+              </span>
               <span className="text-ink/60">
                 {s.count}회 · 총 {formatMinutes(s.totalMinutes)} · 최장{" "}
                 {formatMinutes(s.longestMinutes)}
