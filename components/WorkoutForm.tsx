@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import CoachPanel from "@/components/CoachPanel";
-import { ANALYSIS_FAILED_MESSAGE, analyzeRecord } from "@/lib/coach-client";
+import RetryAnalysis from "@/components/RetryAnalysis";
+import { analyzeRecord } from "@/lib/coach-client";
 import { addRecord, getRecordsSnapshot, subscribeRecords } from "@/lib/storage";
 import {
   MAX_SPORT_LENGTH,
@@ -21,7 +22,7 @@ import type { Level, Workout } from "@/types/workout";
 // 운동 시간(분) / 종목(목록, 기타는 직접 입력) / 강도 1~5 / 컨디션 1~5 / 통증 체크박스.
 // PLAN 4번: 화면과 입력 받기. PLAN 5번: 입력 검사(빈 항목 안내, 0분 이하·소수 불가, 300분 초과 확인, 1440분 초과 불가).
 // PLAN 12번: 검사를 통과하면 기록을 저장 → AI 분석 요청 → 결과를 기록에 저장하고 아래에 보여 준다.
-// (실패 시 다시 시도 버튼은 13번, "도움이 됐나요?"는 14번)
+// (실패하면 "다시 시도" 버튼 - 13번, "도움이 됐나요?"는 14번)
 
 const LEVELS: Level[] = [1, 2, 3, 4, 5];
 
@@ -320,10 +321,15 @@ export default function WorkoutForm() {
         </p>
       )}
 
-      {phase === "failed" && (
-        <p role="alert" className="text-sm font-medium text-red-600">
-          {ANALYSIS_FAILED_MESSAGE} 기록은 저장됐어요.
-        </p>
+      {phase === "failed" && savedId && (
+        <div>
+          <RetryAnalysis
+            recordId={savedId}
+            failed
+            onSuccess={() => setPhase("done")}
+          />
+          <p className="mt-2 text-sm text-ink/50">기록은 저장됐어요.</p>
+        </div>
       )}
 
       {phase === "done" && savedRecord?.coach && (
