@@ -37,9 +37,9 @@ export function truncateSentences(text: string, maxCount: number): string {
 }
 
 // 깨진 글자(U+FFFD)나 제어 문자가 있으면 쓸 수 없는 값으로 본다.
-const BROKEN_TEXT = /[�\u0000-\u001F\u007F]/;
+export const BROKEN_TEXT = /[�\u0000-\u001F\u007F]/;
 
-function isUsablePlan(plan: CoachPlan): boolean {
+export function isUsablePlan(plan: CoachPlan): boolean {
   return plan.sport.trim().length > 0 && !BROKEN_TEXT.test(plan.sport);
 }
 

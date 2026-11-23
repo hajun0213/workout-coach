@@ -142,3 +142,53 @@ export const recommendAiReplySchema = z.object({
     intensity: levelSchema("강도"),
   }),
 });
+
+// ── AI 주간 리포트(/api/weekly-report) — 최근 4주 기록을 요약하고 다음 주 계획을 짠다. ──
+/** 리포트에 쓰는 기록 수의 상한 (최근 4주 안의 기록) */
+export const MAX_REPORT_RECORDS = 40;
+export const MAX_REPORT_BYTES = 16 * 1024;
+export const WEEK_DAYS = ["월", "화", "수", "목", "금", "토", "일"] as const;
+
+export const weeklyReportRequestSchema = z.object({
+  /** 최근 28일 안의 기록. daysAgo는 "오늘" 기준이다. 오래된 것 → 최신 */
+  records: z
+    .array(
+      z.object({
+        daysAgo: z.number().int().min(0).max(27),
+        minutes: workoutInputSchema.shape.minutes,
+        sport: workoutInputSchema.shape.sport,
+        intensity: workoutInputSchema.shape.intensity,
+        condition: workoutInputSchema.shape.condition,
+        pain: z.boolean(),
+      }),
+    )
+    .min(1)
+    .max(MAX_REPORT_RECORDS),
+  /** 사용자가 정한 주간 목표(회) */
+  weeklyGoal: z.number().int().min(1).max(7),
+  /** 월요일 시작 기준 최근 4주(이번 주 포함)의 정확한 주별 합계. 오래된 주 → 이번 주. AI가 숫자를 지어내지 않게 화면이 미리 계산해서 보낸다. */
+  weekly: z
+    .array(
+      z.object({
+        weeksAgo: z.number().int().min(0).max(3),
+        count: z.number().int().min(0).max(100),
+        minutes: z.number().int().min(0).max(10080),
+      }),
+    )
+    .length(4),
+});
+
+export const weeklyReportAiReplySchema = z.object({
+  summary: z.string().trim().min(1),
+  tips: z.array(z.string().trim().min(1)).max(6),
+  plan: z
+    .array(
+      z.object({
+        day: z.enum(WEEK_DAYS),
+        sport: z.string().trim().max(40).nullable(),
+        minutes: z.number().int().min(0).max(MAX_MINUTES),
+        intensity: levelSchema("강도").nullable(),
+      }),
+    )
+    .length(7),
+});

@@ -16,6 +16,7 @@ import HeatmapCard from "@/components/HeatmapCard";
 import RecoveryCard from "@/components/RecoveryCard";
 import GoalCard from "@/components/GoalCard";
 import StatsPanel from "@/components/StatsPanel";
+import WeeklyReportCard from "@/components/WeeklyReportCard";
 import WeeklyChart from "@/components/WeeklyChart";
 import RetryAnalysis from "@/components/RetryAnalysis";
 import { addSampleRecords } from "@/lib/sample";
@@ -207,6 +208,7 @@ export default function RecordList() {
         <div className="flex flex-col gap-6">
           <RecoveryCard />
           <GoalCard records={records} />
+          <WeeklyReportCard records={records} />
           <HeatmapCard records={records} />
           <WeeklyChart records={records} />
           <StatsPanel records={records} />

@@ -54,3 +54,20 @@ export interface RecommendResponse {
   plan: CoachPlan; // 오늘 추천하는 운동
   notices: string[]; // 안내 문구들 (강도를 낮춘 이유, 통증 상담 등)
 }
+
+/** 주간 리포트의 하루 계획. sport가 null이면 쉬는 날 */
+export interface WeeklyPlanDay {
+  day: "월" | "화" | "수" | "목" | "금" | "토" | "일";
+  sport: string | null;
+  minutes: number; // 쉬는 날은 0
+  intensity: Level | null; // 쉬는 날은 null
+}
+
+/** AI 주간 리포트 (서버 → 화면). 이 브라우저에 저장해 두고 다시 볼 수 있다. */
+export interface WeeklyReport {
+  summary: string; // 지난주 요약 (4문장 이내)
+  tips: string[]; // 실천 팁 (최대 3개)
+  plan: WeeklyPlanDay[]; // 다음 주 월~일 계획 (7일)
+  notices: string[]; // 안내 문구들
+  createdAt: string; // 만든 시각 (ISO) — 서버가 아닌 화면이 붙인다
+}

@@ -55,6 +55,8 @@ export async function handleAiPost<TReq, TRes>(
     schema: ZodType<TReq>;
     /** 로그에 남기는 이름 (예: "coach") */
     tag: string;
+    /** AI를 기다리는 최대 시간(ms). 정하지 않으면 8초 (PRD: 서버는 8초까지만 기다린다) */
+    timeoutMs?: number;
     run: (data: TReq, signal: AbortSignal) => Promise<TRes>;
   },
 ): Promise<Response> {
@@ -70,7 +72,7 @@ export async function handleAiPost<TReq, TRes>(
   const parsed = options.schema.safeParse(json);
   if (!parsed.success) return invalidRequest("요청 내용이 올바르지 않아요");
 
-  const timeout = AbortSignal.timeout(AI_TIMEOUT_MS);
+  const timeout = AbortSignal.timeout(options.timeoutMs ?? AI_TIMEOUT_MS);
   const signal = AbortSignal.any([timeout, request.signal]);
   try {
     const body = await options.run(parsed.data, signal);
