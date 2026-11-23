@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# 삭제 대기 폴더 (직접 확인 후 삭제)
+/trash-can/
+
+# 외부 오픈소스(clawd-on-desk): 별도 git 저장소라 my-app 기록에서 제외
+/clawd-on-desk/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

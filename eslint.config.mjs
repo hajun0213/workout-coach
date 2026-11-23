@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // 외부 오픈소스 폴더는 검사하지 않는다.
+    "clawd-on-desk/**",
   ]),
 ]);
 
