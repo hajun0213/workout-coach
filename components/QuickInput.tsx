@@ -69,7 +69,7 @@ export default function QuickInput({
         maxLength={MAX_QUICK_TEXT}
         rows={2}
         placeholder={`예: ${EXAMPLE}`}
-        className="mt-2 w-full resize-none rounded-xl border border-ink/10 bg-white px-4 py-3 text-base outline-none transition-colors focus:border-ink/40 focus-visible:ring-2 focus-visible:ring-accent/40"
+        className="mt-2 w-full resize-none rounded-xl border border-ink/10 bg-surface px-4 py-3 text-base outline-none transition-colors focus:border-ink/40 focus-visible:ring-2 focus-visible:ring-accent/40"
       />
       <div className="mt-2 flex flex-wrap items-center gap-3">
         <button

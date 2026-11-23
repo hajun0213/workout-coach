@@ -97,7 +97,7 @@ export default function TodayRecommend({
                   event.target.value === "" ? null : Number(event.target.value),
                 )
               }
-              className="h-10 rounded-xl border border-ink/10 bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              className="h-10 rounded-xl border border-ink/10 bg-surface px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
             >
               <option value="">제한 없음</option>
               {TIME_CHOICES.map((m) => (

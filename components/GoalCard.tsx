@@ -43,7 +43,7 @@ export default function GoalCard({ records }: { records: Workout[] }) {
   return (
     <section
       aria-label="주간 목표"
-      className="rounded-[28px] border border-ink/10 bg-white/70 p-5 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)] sm:p-6"
+      className="rounded-[28px] border border-ink/10 bg-surface/70 p-5 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)] sm:p-6"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold tracking-tight">이번 주 목표</h2>
@@ -54,7 +54,7 @@ export default function GoalCard({ records }: { records: Workout[] }) {
             onChange={(event) =>
               setError(!setWeeklyGoal(Number(event.target.value)))
             }
-            className="h-10 rounded-xl border border-ink/10 bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+            className="h-10 rounded-xl border border-ink/10 bg-surface px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
           >
             {GOAL_CHOICES.map((n) => (
               <option key={n} value={n}>

@@ -6,7 +6,7 @@ import type { Level } from "@/types/workout";
 const LEVELS: Level[] = [1, 2, 3, 4, 5];
 
 export const fieldClass =
-  "h-12 w-full rounded-xl border bg-white px-4 text-base outline-none transition-colors focus-visible:ring-2";
+  "h-12 w-full rounded-xl border bg-surface px-4 text-base outline-none transition-colors focus-visible:ring-2";
 export const fieldOk =
   "border-ink/10 focus:border-ink/40 focus-visible:ring-accent/40";
 export const fieldBad =
@@ -67,7 +67,7 @@ export function LevelPicker({
             <span
               className={`flex size-12 items-center justify-center rounded-xl text-base font-medium transition-colors peer-checked:bg-chip peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-accent/60 ${
                 error
-                  ? "bg-red-50 hover:bg-red-100"
+                  ? "bg-red-500/10 hover:bg-red-500/100/20"
                   : "bg-ink/5 hover:bg-ink/10"
               }`}
             >

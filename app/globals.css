@@ -14,8 +14,48 @@
   --leaf: #22b455; /* 목표 달성·이번 주 표시(초록) */
   --leaf-text: #15803d; /* 초록 글자 (흰 바탕에서 읽기 쉬운 진한 초록) */
 
+  --grad-top: #dbe3ee; /* 첫 화면 배경 그라데이션 */
+  --grad-mid: #eef2f8;
+  color-scheme: light; /* 브라우저 기본 부품(스크롤바·선택 목록)도 밝게 */
+
   --background: var(--page);
   --foreground: var(--ink);
+}
+
+/* 다크 모드: 사용자가 고르면(data-theme="dark") 또는, 고르지 않았을 때 기기 설정이 어두우면 적용한다. */
+:root[data-theme="dark"] {
+  --ink: #e8ecf3;
+  --page: #0e1116;
+  --surface: #1a1f29;
+  --pill: rgba(30, 36, 48, 0.82);
+  --panel: #0a0c10;
+  --chip: #2f3647;
+  --chip-hover: #3c4559;
+  --accent: #ff6a33;
+  --cobalt: #6b7fff;
+  --leaf: #34c36a;
+  --leaf-text: #4ade80;
+  --grad-top: #1a2130;
+  --grad-mid: #131822;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #e8ecf3;
+    --page: #0e1116;
+    --surface: #1a1f29;
+    --pill: rgba(30, 36, 48, 0.82);
+    --panel: #0a0c10;
+    --chip: #2f3647;
+    --chip-hover: #3c4559;
+    --accent: #ff6a33;
+    --cobalt: #6b7fff;
+    --leaf: #34c36a;
+    --leaf-text: #4ade80;
+    --grad-top: #1a2130;
+    --grad-mid: #131822;
+    color-scheme: dark;
+  }
 }
 
 @theme inline {
@@ -42,9 +82,9 @@ body {
   background-color: var(--page);
   background-image: linear-gradient(
     to bottom,
-    #dbe3ee 0%,
-    #eef2f8 62%,
-    #f4f7fb 100%
+    var(--grad-top) 0%,
+    var(--grad-mid) 62%,
+    var(--page) 100%
   );
   background-size: 100% 100vh;
   background-repeat: no-repeat;

@@ -112,7 +112,7 @@ export default function RecordEditor({
       noValidate
       onSubmit={handleSubmit}
       aria-label="기록 수정"
-      className="mt-5 flex flex-col gap-6 rounded-2xl border border-ink/10 bg-white p-5"
+      className="mt-5 flex flex-col gap-6 rounded-2xl border border-ink/10 bg-surface p-5"
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <div>

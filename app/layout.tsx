@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight } from "next/font/google";
 import Link from "next/link";
+import Script from "next/script";
 import InstallPrompt from "@/components/InstallPrompt";
 import MainNav from "@/components/MainNav";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -31,16 +33,26 @@ export const metadata: Metadata = {
 // PC 웹 화면(본문 최대 너비 max-w-5xl = 약 1024px)을 기준으로 만들고, 휴대폰(sm 미만)에서는 여백·헤더 크기를 줄인다. (§1.1, N3)
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${interTight.variable} h-full antialiased`}>
+    <html
+      lang="ko"
+      className={`${interTight.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-full flex flex-col">
+        {/* 저장된 화면 색(밝게/어둡게)을 첫 화면이 그려지기 전에 적용한다. 고정된 한 줄 스크립트다. */}
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
         <header className="pointer-events-none sticky top-0 z-40">
           <div className="mx-auto flex w-full max-w-5xl items-start justify-between gap-2 px-4 pt-4 sm:px-6 sm:pt-6">
             <Link
               href="/"
               aria-label="오늘의 운동 코치 홈"
-              className="pointer-events-auto flex h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-pill px-4 shadow-[0_8px_24px_rgba(40,60,110,0.12)] backdrop-blur-[14px] sm:h-14 sm:px-5"
+              className="pointer-events-auto flex h-12 items-center gap-1.5 whitespace-nowrap rounded-2xl bg-pill px-3 shadow-[0_8px_24px_rgba(40,60,110,0.12)] backdrop-blur-[14px] sm:h-14 sm:gap-2 sm:px-5"
             >
-              <span className="text-base font-semibold tracking-tight sm:text-lg">
+              <span className="text-sm font-semibold tracking-tight sm:text-lg">
                 오늘의 운동 코치
               </span>
               <span

@@ -73,7 +73,7 @@ function RecordCard({
   const { coach } = record;
   const [editing, setEditing] = useState(false);
   return (
-    <li className="rounded-[28px] border border-ink/10 bg-white/70 p-5 sm:p-6 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)]">
+    <li className="rounded-[28px] border border-ink/10 bg-surface/70 p-5 sm:p-6 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)]">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm text-ink/50">{formatDate(record.date)}</p>
@@ -101,7 +101,7 @@ function RecordCard({
             type="button"
             onClick={() => onDelete(record)}
             aria-label={`${formatDate(record.date)} ${record.sport} 기록 삭제`}
-            className="rounded-xl px-4 py-2 text-sm font-medium text-ink/60 transition-colors hover:bg-red-50 hover:text-red-600"
+            className="rounded-xl px-4 py-2 text-sm font-medium text-ink/60 transition-colors hover:bg-red-500/10 hover:text-red-600"
           >
             삭제
           </button>
@@ -175,7 +175,7 @@ export default function RecordList() {
   if (records.length === 0) {
     return (
       <div>
-        <div className="flex flex-col items-start gap-5 rounded-[28px] border border-ink/10 bg-white/70 p-6 sm:p-8 shadow-[0_40px_70px_rgba(40,60,110,0.12),0_6px_14px_rgba(20,30,60,0.08)]">
+        <div className="flex flex-col items-start gap-5 rounded-[28px] border border-ink/10 bg-surface/70 p-6 sm:p-8 shadow-[0_40px_70px_rgba(40,60,110,0.12),0_6px_14px_rgba(20,30,60,0.08)]">
           <p className="text-lg font-medium">아직 기록이 없어요</p>
           <p className="text-base text-ink/60">
             운동을 마친 뒤 오늘 기록을 남기면 이곳에 쌓여요.
@@ -312,7 +312,7 @@ export default function RecordList() {
         <button
           type="button"
           onClick={handleClearAll}
-          className="rounded-xl px-4 py-2 text-sm font-medium text-ink/60 transition-colors hover:bg-red-50 hover:text-red-600"
+          className="rounded-xl px-4 py-2 text-sm font-medium text-ink/60 transition-colors hover:bg-red-500/10 hover:text-red-600"
         >
           전체 삭제
         </button>

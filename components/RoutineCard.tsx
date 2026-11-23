@@ -128,7 +128,7 @@ export default function RoutineCard() {
                 type="button"
                 onClick={() => deleteRoutine(routine.id)}
                 aria-label={`${routine.sport} ${formatDays(routine.days)} 루틴 삭제`}
-                className="shrink-0 rounded-xl px-3 py-1.5 text-sm font-medium text-ink/60 transition-colors hover:bg-red-50 hover:text-red-600"
+                className="shrink-0 rounded-xl px-3 py-1.5 text-sm font-medium text-ink/60 transition-colors hover:bg-red-500/10 hover:text-red-600"
               >
                 삭제
               </button>

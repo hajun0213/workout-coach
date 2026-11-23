@@ -113,7 +113,7 @@ export default function SportSelect({
         aria-describedby={describedBy}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={handleKeyDown}
-        className={`flex h-12 w-full items-center gap-3 rounded-xl border bg-white px-4 text-left text-base outline-none transition-colors focus-visible:ring-2 ${invalid ? "border-red-500 focus-visible:ring-red-500/30" : fieldOk}`}
+        className={`flex h-12 w-full items-center gap-3 rounded-xl border bg-surface px-4 text-left text-base outline-none transition-colors focus-visible:ring-2 ${invalid ? "border-red-500 focus-visible:ring-red-500/30" : fieldOk}`}
       >
         {value ? (
           <>
@@ -138,7 +138,7 @@ export default function SportSelect({
           id={listId}
           role="listbox"
           aria-labelledby={labelledBy}
-          className="absolute left-0 right-0 z-30 mt-2 max-h-72 overflow-auto rounded-2xl border border-ink/10 bg-white p-1.5 shadow-[0_24px_50px_rgba(40,60,110,0.18),0_4px_10px_rgba(20,30,60,0.08)]"
+          className="absolute left-0 right-0 z-30 mt-2 max-h-72 overflow-auto rounded-2xl border border-ink/10 bg-surface p-1.5 shadow-[0_24px_50px_rgba(40,60,110,0.18),0_4px_10px_rgba(20,30,60,0.08)]"
         >
           {SPORT_OPTIONS.map((option, index) => (
             <li

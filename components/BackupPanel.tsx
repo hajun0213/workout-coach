@@ -107,7 +107,7 @@ export default function BackupPanel({ count }: { count: number }) {
   return (
     <section
       aria-label="기록 백업"
-      className="rounded-[28px] border border-ink/10 bg-white/70 p-5 sm:p-6"
+      className="rounded-[28px] border border-ink/10 bg-surface/70 p-5 sm:p-6"
     >
       <h2 className="text-lg font-semibold tracking-tight">기록 백업</h2>
       <p className="mt-2 text-sm leading-relaxed text-ink/60">

@@ -68,7 +68,7 @@ export default function WeeklyChart({ records }: { records: Workout[] }) {
   return (
     <section
       aria-label="주간 요약"
-      className="rounded-[28px] border border-ink/10 bg-white/70 p-5 sm:p-6 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)]"
+      className="rounded-[28px] border border-ink/10 bg-surface/70 p-5 sm:p-6 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)]"
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-lg font-semibold tracking-tight">주간 요약</h2>
