@@ -34,7 +34,9 @@ export type ValidationResult =
 // 숫자 모양만 통과: 12, -5, 1.5 (1e3, 0x10, 빈 칸 등은 제외)
 const DECIMAL_PATTERN = /^-?\d+(\.\d+)?$/;
 
-export function validateWorkoutForm(values: WorkoutFormValues): ValidationResult {
+export function validateWorkoutForm(
+  values: WorkoutFormValues,
+): ValidationResult {
   const errors: FieldErrors = {};
 
   // 운동 시간

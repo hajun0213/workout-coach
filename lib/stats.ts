@@ -12,7 +12,10 @@ function recordDay(record: Workout): number {
 }
 
 /** 연속으로 운동한 날 수. 오늘 기록이 없어도 어제까지 이어졌다면 이어진 것으로 센다. */
-export function currentDayStreak(records: Workout[], now: Date = new Date()): number {
+export function currentDayStreak(
+  records: Workout[],
+  now: Date = new Date(),
+): number {
   const days = new Set(records.map(recordDay).filter((d) => !Number.isNaN(d)));
   const today = dayNumber(now);
   let day = days.has(today) ? today : today - 1;
@@ -26,7 +29,9 @@ export function currentDayStreak(records: Workout[], now: Date = new Date()): nu
 
 /** 지금까지 가장 길게 이어진 연속 운동 일수 */
 export function longestDayStreak(records: Workout[]): number {
-  const days = [...new Set(records.map(recordDay).filter((d) => !Number.isNaN(d)))].sort((a, b) => a - b);
+  const days = [
+    ...new Set(records.map(recordDay).filter((d) => !Number.isNaN(d))),
+  ].sort((a, b) => a - b);
   let best = 0;
   let run = 0;
   days.forEach((day, i) => {
@@ -49,12 +54,19 @@ function countsByWeek(records: Workout[]): Map<number, number> {
 }
 
 /** 이번 주 운동 횟수 */
-export function thisWeekCount(records: Workout[], now: Date = new Date()): number {
+export function thisWeekCount(
+  records: Workout[],
+  now: Date = new Date(),
+): number {
   return countsByWeek(records).get(mondayOf(dayNumber(now))) ?? 0;
 }
 
 /** 주간 목표를 연속으로 달성한 주 수. 이번 주를 아직 못 채웠어도, 지난주까지 이어졌다면 이어진 것으로 센다. */
-export function goalWeekStreak(records: Workout[], goal: number, now: Date = new Date()): number {
+export function goalWeekStreak(
+  records: Workout[],
+  goal: number,
+  now: Date = new Date(),
+): number {
   const counts = countsByWeek(records);
   let monday = mondayOf(dayNumber(now));
   if ((counts.get(monday) ?? 0) < goal) monday -= 7;
@@ -77,13 +89,20 @@ export interface SportStat {
 export function sportStats(records: Workout[]): SportStat[] {
   const map = new Map<string, SportStat>();
   for (const r of records) {
-    const stat = map.get(r.sport) ?? { sport: r.sport, count: 0, totalMinutes: 0, longestMinutes: 0 };
+    const stat = map.get(r.sport) ?? {
+      sport: r.sport,
+      count: 0,
+      totalMinutes: 0,
+      longestMinutes: 0,
+    };
     stat.count++;
     stat.totalMinutes += r.minutes;
     stat.longestMinutes = Math.max(stat.longestMinutes, r.minutes);
     map.set(r.sport, stat);
   }
-  return [...map.values()].sort((a, b) => b.count - a.count || b.totalMinutes - a.totalMinutes);
+  return [...map.values()].sort(
+    (a, b) => b.count - a.count || b.totalMinutes - a.totalMinutes,
+  );
 }
 
 export interface PersonalRecords {
@@ -99,7 +118,8 @@ export function personalRecords(records: Workout[]): PersonalRecords {
   let totalMinutes = 0;
   for (const r of records) {
     totalMinutes += r.minutes;
-    if (!longest || r.minutes > longest.minutes) longest = { minutes: r.minutes, sport: r.sport, date: r.date };
+    if (!longest || r.minutes > longest.minutes)
+      longest = { minutes: r.minutes, sport: r.sport, date: r.date };
   }
   return {
     totalCount: records.length,

@@ -92,3 +92,21 @@ export const coachAiReplySchema = z.object({
     intensity: levelSchema("강도"),
   }),
 });
+
+// ── 한 줄 빠른 입력(/api/parse-workout) — 사용자가 쓴 문장을 AI가 입력 칸 값으로 바꿔 준다. ──
+/** 입력 문장의 최대 글자 수와 요청 본문 최대 크기(바이트) */
+export const MAX_QUICK_TEXT = 300;
+export const MAX_PARSE_BYTES = 2 * 1024;
+
+export const parseRequestSchema = z.object({
+  text: z.string().trim().min(1).max(MAX_QUICK_TEXT),
+});
+
+/** AI가 문장에서 읽어 낸 값. 문장에 없는 항목은 null이다. (서버가 받은 뒤 normalizeParse로 다시 걸러 낸다) */
+export const parseAiReplySchema = z.object({
+  minutes: z.number().nullable(),
+  sport: z.string().nullable(),
+  intensity: z.number().nullable(),
+  condition: z.number().nullable(),
+  pain: z.boolean().nullable(),
+});

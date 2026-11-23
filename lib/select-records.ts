@@ -72,7 +72,8 @@ export function selectRecordsForCoach(
   if (all.length < FEW_RECORDS_UNDER) notices.push(FEW_RECORDS_NOTICE);
 
   const lightStart =
-    previous !== null && daysBetween(target.date, previous.date) >= LONG_GAP_DAYS;
+    previous !== null &&
+    daysBetween(target.date, previous.date) >= LONG_GAP_DAYS;
   if (lightStart) notices.push(LONG_GAP_NOTICE);
 
   // 오랜만이면 방금 기록만, 아니면 방금 기록까지의 최근 최대 7건 (오래된 것 → 최신, 마지막이 방금 기록)

@@ -9,7 +9,9 @@ import type { Workout } from "@/types/workout";
 export const STORAGE_KEY = "workout-records-v1";
 
 function isLevel(value: unknown): boolean {
-  return Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 5;
+  return (
+    Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 5
+  );
 }
 
 // 저장된 값이 우리가 약속한 기록 모양인지 가볍게 확인한다. (깨졌거나 직접 고친 값이 화면을 망가뜨리지 않게)
@@ -147,11 +149,16 @@ export function clearRecords(): boolean {
 }
 
 /** 기록 한 건의 일부 항목(분석 결과·도움 응답 등)을 고쳐 저장한다. 없는 번호면 false, 저장에 성공하면 true. */
-export function updateRecord(id: string, patch: Partial<Omit<Workout, "id">>): boolean {
+export function updateRecord(
+  id: string,
+  patch: Partial<Omit<Workout, "id">>,
+): boolean {
   const records = loadRecords();
   if (!records.some((record) => record.id === id)) return false;
   return writeRecords(
-    records.map((record) => (record.id === id ? { ...record, ...patch } : record)),
+    records.map((record) =>
+      record.id === id ? { ...record, ...patch } : record,
+    ),
   );
 }
 
@@ -159,7 +166,9 @@ export function updateRecord(id: string, patch: Partial<Omit<Workout, "id">>): b
  * 가져온 기록을 지금 기록에 합친다. 이미 있는 번호(id)의 기록은 건너뛰고, 저장 날짜순(오래된 것 → 최신)으로 다시 정렬한다.
  * @returns 저장에 성공하면 { added, duplicates }, 막혀 있으면 null
  */
-export function mergeRecords(incoming: Workout[]): { added: number; duplicates: number } | null {
+export function mergeRecords(
+  incoming: Workout[],
+): { added: number; duplicates: number } | null {
   const current = loadRecords();
   const ids = new Set(current.map((record) => record.id));
   const fresh = incoming.filter((record) => !ids.has(record.id));

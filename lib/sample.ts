@@ -38,7 +38,9 @@ const COACH: Record<number, CoachResponse> = {
     feedback:
       "컨디션이 좋지 않은 날 통증이 있었는데도 웨이트를 50분 하셨어요. 오늘은 무리하지 않고 쉬어 가는 게 좋겠습니다. 통증이 계속되면 전문가와 상담해 보세요.",
     plan: { sport: "요가", minutes: 30, intensity: 1 },
-    notices: ["통증이 계속되면 운동을 쉬고 의사·물리치료사 같은 전문가와 상담해 보세요."],
+    notices: [
+      "통증이 계속되면 운동을 쉬고 의사·물리치료사 같은 전문가와 상담해 보세요.",
+    ],
   },
   4: {
     feedback:

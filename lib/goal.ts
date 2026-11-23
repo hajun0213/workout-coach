@@ -1,4 +1,8 @@
-import { DEFAULT_WEEKLY_GOAL, MAX_WEEKLY_GOAL, MIN_WEEKLY_GOAL } from "@/lib/stats";
+import {
+  DEFAULT_WEEKLY_GOAL,
+  MAX_WEEKLY_GOAL,
+  MIN_WEEKLY_GOAL,
+} from "@/lib/stats";
 
 // 추가 기능 — 주간 운동 목표(회). 기록과 마찬가지로 이 브라우저(localStorage)에만 저장한다.
 export const GOAL_KEY = "weekly-goal-v1";
@@ -48,7 +52,11 @@ export function getGoalSnapshot(): number {
 
 /** 주간 목표를 저장한다. 범위(1~7회) 밖이거나 저장이 막혀 있으면 false. */
 export function setWeeklyGoal(goal: number): boolean {
-  if (!Number.isInteger(goal) || goal < MIN_WEEKLY_GOAL || goal > MAX_WEEKLY_GOAL) {
+  if (
+    !Number.isInteger(goal) ||
+    goal < MIN_WEEKLY_GOAL ||
+    goal > MAX_WEEKLY_GOAL
+  ) {
     return false;
   }
   const storage = getStorage();

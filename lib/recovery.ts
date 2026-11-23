@@ -30,7 +30,10 @@ export function assessRecovery(
   if (records.length === 0) return null;
   const today = dayNumber(now);
   const withAge = records
-    .map((record) => ({ record, ago: today - dayNumber(new Date(record.date)) }))
+    .map((record) => ({
+      record,
+      ago: today - dayNumber(new Date(record.date)),
+    }))
     .filter((item) => !Number.isNaN(item.ago) && item.ago >= 0)
     .sort((a, b) => a.ago - b.ago); // 최신 → 오래된
   const last7 = withAge.filter((item) => item.ago <= 6);
@@ -48,10 +51,14 @@ export function assessRecovery(
 
   const streak = currentDayStreak(records, now);
   if (streak >= STREAK_LIMIT) {
-    reasons.push(`${streak}일 연속으로 운동했어요. 몸이 회복할 하루를 만들어 주세요.`);
+    reasons.push(
+      `${streak}일 연속으로 운동했어요. 몸이 회복할 하루를 만들어 주세요.`,
+    );
   }
 
-  const hard = last7.filter((item) => item.record.intensity >= HARD_INTENSITY).length;
+  const hard = last7.filter(
+    (item) => item.record.intensity >= HARD_INTENSITY,
+  ).length;
   if (hard >= HARD_COUNT_LIMIT) {
     reasons.push(
       `최근 7일 동안 힘든 운동(강도 ${HARD_INTENSITY} 이상)을 ${hard}번 했어요. 가벼운 운동이나 휴식을 섞어 보세요.`,
@@ -59,9 +66,15 @@ export function assessRecovery(
   }
 
   const latest = last7.slice(0, 3).map((item) => item.record.condition); // 최신 → 과거
-  const lowTwice = latest.length >= 2 && latest[0] <= LOW_CONDITION && latest[1] <= LOW_CONDITION;
+  const lowTwice =
+    latest.length >= 2 &&
+    latest[0] <= LOW_CONDITION &&
+    latest[1] <= LOW_CONDITION;
   const falling =
-    latest.length === 3 && latest[0] < latest[1] && latest[1] < latest[2] && latest[0] <= 3;
+    latest.length === 3 &&
+    latest[0] < latest[1] &&
+    latest[1] < latest[2] &&
+    latest[0] <= 3;
   if (lowTwice || falling) {
     reasons.push(
       lowTwice
@@ -71,9 +84,13 @@ export function assessRecovery(
     needsRest = true;
   }
 
-  const painDays = withAge.filter((item) => item.ago <= 2 && item.record.pain).length;
+  const painDays = withAge.filter(
+    (item) => item.ago <= 2 && item.record.pain,
+  ).length;
   if (painDays >= 1) {
-    reasons.push("최근 며칠 사이 통증이 있었어요. 통증이 계속되면 전문가와 상담해 보세요.");
+    reasons.push(
+      "최근 며칠 사이 통증이 있었어요. 통증이 계속되면 전문가와 상담해 보세요.",
+    );
     needsRest = true;
   }
 
@@ -81,7 +98,9 @@ export function assessRecovery(
     return {
       level: "good",
       title: "회복 상태가 좋아요",
-      reasons: ["최근 기록에서 무리한 신호가 보이지 않아요. 이 흐름을 이어 가세요."],
+      reasons: [
+        "최근 기록에서 무리한 신호가 보이지 않아요. 이 흐름을 이어 가세요.",
+      ],
     };
   }
   if (needsRest || reasons.length >= 2) {

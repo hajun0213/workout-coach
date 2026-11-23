@@ -34,9 +34,17 @@ const backupRecordSchema = z.object({
 });
 
 /** 기록 목록을 백업 파일 내용(JSON 글자)으로 만든다. */
-export function createBackup(records: Workout[], now: Date = new Date()): string {
+export function createBackup(
+  records: Workout[],
+  now: Date = new Date(),
+): string {
   return JSON.stringify(
-    { app: BACKUP_APP, version: BACKUP_VERSION, exportedAt: now.toISOString(), records },
+    {
+      app: BACKUP_APP,
+      version: BACKUP_VERSION,
+      exportedAt: now.toISOString(),
+      records,
+    },
     null,
     2,
   );
@@ -68,7 +76,10 @@ export function parseBackup(text: string): ParsedBackup {
     return { ok: false, message: "이 앱에서 내보낸 백업 파일이 아니에요." };
   }
   if (file.records.length > MAX_BACKUP_RECORDS) {
-    return { ok: false, message: `기록이 너무 많아요. (최대 ${MAX_BACKUP_RECORDS}건)` };
+    return {
+      ok: false,
+      message: `기록이 너무 많아요. (최대 ${MAX_BACKUP_RECORDS}건)`,
+    };
   }
 
   const records: Workout[] = [];

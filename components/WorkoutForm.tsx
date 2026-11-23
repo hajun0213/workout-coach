@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import CoachPanel from "@/components/CoachPanel";
+import QuickInput from "@/components/QuickInput";
 import SportSelect from "@/components/SportSelect";
 import RetryAnalysis from "@/components/RetryAnalysis";
+import type { QuickFill } from "@/lib/quick-input";
 import { analyzeRecord } from "@/lib/coach-client";
 import { addRecord, getRecordsSnapshot, subscribeRecords } from "@/lib/storage";
-import { MAX_SPORT_LENGTH, OTHER_SPORT } from "@/lib/schema";
+import { MAX_SPORT_LENGTH, OTHER_SPORT, SPORT_OPTIONS } from "@/lib/schema";
 import {
   validateWorkoutForm,
   type FieldErrors,
@@ -60,6 +62,22 @@ export default function WorkoutForm() {
       delete next[field];
       return next;
     });
+  }
+
+  // AI가 읽어 낸 값을 입력 칸에 넣는다. 읽지 못한 항목(null)은 건드리지 않는다.
+  function applyQuickFill(fill: QuickFill) {
+    setErrors({});
+    if (fill.minutes !== null) setMinutes(String(fill.minutes));
+    if (fill.sport !== null) {
+      const listed =
+        (SPORT_OPTIONS as readonly string[]).includes(fill.sport) &&
+        fill.sport !== OTHER_SPORT;
+      setSport(listed ? fill.sport : OTHER_SPORT);
+      setCustomSport(listed ? "" : fill.sport);
+    }
+    if (fill.intensity !== null) setIntensity(fill.intensity);
+    if (fill.condition !== null) setCondition(fill.condition);
+    if (fill.pain !== null) setPain(fill.pain);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -136,6 +154,8 @@ export default function WorkoutForm() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-8 rounded-[28px] border border-ink/10 bg-white/70 p-5 sm:p-8 shadow-[0_40px_70px_rgba(40,60,110,0.12),0_6px_14px_rgba(20,30,60,0.08)]"
     >
+      <QuickInput onFill={applyQuickFill} />
+
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
           <label className="block">

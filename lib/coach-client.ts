@@ -5,13 +5,19 @@ import type { CoachResponse } from "@/types/workout";
 // Design Ref: §4.2 단계 3~7 — 저장된 기록 중 AI에 보낼 것을 고르고, /api/coach를 부르고, 결과를 기록에 붙여 저장한다.
 // 화면(입력 폼, 이후 다시 시도 버튼)이 함께 쓴다. 자동 재시도는 하지 않는다. (PRD)
 
-export const ANALYSIS_FAILED_MESSAGE = "분석에 실패했습니다. 다시 시도해 주세요";
+export const ANALYSIS_FAILED_MESSAGE =
+  "분석에 실패했습니다. 다시 시도해 주세요";
 /** 화면이 기다리는 최대 시간(ms). 서버는 8초에서 끊으므로 그보다 조금 더 기다린다. (PRD: 전체 10초 목표) */
 const CLIENT_TIMEOUT_MS = 10_000;
 
-function isCoachResponse(value: unknown): value is Omit<CoachResponse, "notices"> & { notices?: unknown } {
+function isCoachResponse(
+  value: unknown,
+): value is Omit<CoachResponse, "notices"> & { notices?: unknown } {
   if (typeof value !== "object" || value === null) return false;
-  const v = value as { feedback?: unknown; plan?: Record<string, unknown> | null };
+  const v = value as {
+    feedback?: unknown;
+    plan?: Record<string, unknown> | null;
+  };
   return (
     typeof v.feedback === "string" &&
     v.feedback.length > 0 &&

@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { coachAiReplySchema } from "@/lib/schema";
+import type { ZodType } from "zod";
 import type { CoachPlan, CoachRequest } from "@/types/workout";
 
 // 서버 전용: OpenAI 키를 다루는 곳이다. 화면(브라우저) 코드에서 불러오면 안 된다. (Design §5, §8)
@@ -83,16 +84,26 @@ function getClient(): OpenAI {
   return client;
 }
 
+/** callJson에 넘기는 옵션 */
+export interface JsonCall<T> {
+  instructions: string;
+  /** AI에게 보내는 입력(글자). 보통 JSON.stringify한 값이다. */
+  input: string;
+  /** OpenAI 구조화 출력 이름과 JSON 규칙 */
+  schemaName: string;
+  jsonSchema: Record<string, unknown>;
+  /** 받은 답을 믿지 않고 다시 검사하는 규칙 */
+  reply: ZodType<T>;
+  maxOutputTokens: number;
+  /** 중간에 끊기 위한 신호 (시간 초과·접속 끊김) */
+  signal: AbortSignal;
+}
+
 /**
- * AI에게 피드백과 다음 운동 계획을 받는다.
- * @param request 이미 검사를 마친 요청
- * @param signal 중간에 끊기 위한 신호 (시간 초과·접속 끊김)
+ * 정해진 JSON 모양으로 답하게 해서 AI를 한 번 호출하고, 답을 다시 검사해 돌려준다. (모든 AI 기능이 함께 쓴다)
  * @throws AiFailure 어떤 실패든 AiFailure 하나로만 던진다. (OpenAI의 오류 내용은 밖으로 나가지 않는다.)
  */
-export async function requestCoach(
-  request: CoachRequest,
-  signal: AbortSignal,
-): Promise<{ feedback: string; plan: CoachPlan }> {
+export async function callJson<T>(call: JsonCall<T>): Promise<T> {
   const openai = getClient();
 
   let outputText: string;
@@ -100,28 +111,31 @@ export async function requestCoach(
     const response = await openai.responses.create(
       {
         model: process.env.OPENAI_MODEL || DEFAULT_MODEL,
-        instructions: INSTRUCTIONS,
-        input: JSON.stringify(request),
+        instructions: call.instructions,
+        input: call.input,
         text: {
           format: {
             type: "json_schema",
-            name: "coach_reply",
+            name: call.schemaName,
             strict: true,
-            schema: REPLY_JSON_SCHEMA,
+            schema: call.jsonSchema,
           },
         },
-        max_output_tokens: 700,
+        max_output_tokens: call.maxOutputTokens,
         store: false, // OpenAI 쪽에 대화를 저장하지 않는다. (개인 건강 기록이라 남기지 않는다)
       },
       // 자동 재시도는 하지 않는다. (PRD: 자동으로 다시 시도하지 않음)
-      { signal, maxRetries: 0 },
+      { signal: call.signal, maxRetries: 0 },
     );
     outputText = response.output_text;
   } catch (error) {
     // 우리가 건 제한 시간·접속 끊김으로 끊긴 경우는 호출한 쪽(route)이 구분한다.
-    if (signal.aborted) throw error;
+    if (call.signal.aborted) throw error;
     const status = (error as { status?: unknown })?.status;
-    throw new AiFailure("upstream", typeof status === "number" ? status : undefined);
+    throw new AiFailure(
+      "upstream",
+      typeof status === "number" ? status : undefined,
+    );
   }
 
   let parsed: unknown;
@@ -130,7 +144,27 @@ export async function requestCoach(
   } catch {
     throw new AiFailure("format");
   }
-  const reply = coachAiReplySchema.safeParse(parsed);
+  const reply = call.reply.safeParse(parsed);
   if (!reply.success) throw new AiFailure("format");
   return reply.data;
+}
+
+/**
+ * AI에게 피드백과 다음 운동 계획을 받는다.
+ * @param request 이미 검사를 마친 요청
+ * @param signal 중간에 끊기 위한 신호 (시간 초과·접속 끊김)
+ */
+export function requestCoach(
+  request: CoachRequest,
+  signal: AbortSignal,
+): Promise<{ feedback: string; plan: CoachPlan }> {
+  return callJson({
+    instructions: INSTRUCTIONS,
+    input: JSON.stringify(request),
+    schemaName: "coach_reply",
+    jsonSchema: REPLY_JSON_SCHEMA,
+    reply: coachAiReplySchema,
+    maxOutputTokens: 700,
+    signal,
+  });
 }

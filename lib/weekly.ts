@@ -25,7 +25,7 @@ export function dayNumber(date: Date): number {
 // 그 날이 속한 주의 월요일 번호
 export function mondayOf(day: number): number {
   // 1970-01-01(번호 0)은 목요일이라 (day + 3) % 7 이 월요일=0이 된다.
-  return day - (((day + 3) % 7) + 7) % 7;
+  return day - ((((day + 3) % 7) + 7) % 7);
 }
 
 /**
