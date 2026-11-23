@@ -50,3 +50,34 @@ export const workoutInputSchema = z.object({
 });
 
 export type WorkoutInput = z.infer<typeof workoutInputSchema>;
+
+// ── 서버 API(/api/coach)가 받는 요청 (Design §5) ──
+// 서버도 화면과 별개로 다시 검사한다. 화면 검사는 우회될 수 있기 때문이다.
+// 정해 둔 항목 외의 필드(이름·연락처 등)는 있어도 버려서 AI에 보내지 않는다.
+
+/** 요청 본문의 최대 크기(바이트). 기록 7건은 약 2KB라 넉넉한 상한이다. */
+export const MAX_REQUEST_BYTES = 8 * 1024;
+
+const aiRecordSchema = z.object({
+  daysAgo: z.number().int().min(0).max(3650), // 방금 기록 기준 며칠 전 (10년 이내)
+  minutes: workoutInputSchema.shape.minutes,
+  sport: workoutInputSchema.shape.sport,
+  intensity: workoutInputSchema.shape.intensity,
+  condition: workoutInputSchema.shape.condition,
+  pain: z.boolean(),
+});
+
+export const coachRequestSchema = z.object({
+  records: z.array(aiRecordSchema).min(1).max(MAX_AI_RECORDS),
+  lightStart: z.boolean(),
+});
+
+/** AI가 돌려주는 답(서버가 AI 답을 믿지 않고 다시 검사하는 규칙). 안내 문구(notices)는 AI가 아니라 서버가 만든다. */
+export const coachAiReplySchema = z.object({
+  feedback: z.string().trim().min(1),
+  plan: z.object({
+    sport: z.string().trim().min(1).max(40),
+    minutes: z.number().int().min(MIN_MINUTES).max(MAX_MINUTES),
+    intensity: levelSchema("강도"),
+  }),
+});
