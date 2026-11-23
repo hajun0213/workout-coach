@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter_Tight } from "next/font/google";
 import Link from "next/link";
+import InstallPrompt from "@/components/InstallPrompt";
 import MainNav from "@/components/MainNav";
 import "./globals.css";
 
@@ -11,7 +12,16 @@ const interTight = Inter_Tight({
 });
 
 // Plan SC: S6 — 제목·언어를 정리하고 lint·build가 통과하는 기본 틀
+export const viewport: Viewport = {
+  themeColor: "#12151b",
+};
+
 export const metadata: Metadata = {
+  icons: {
+    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: { capable: true, title: "운동 코치", statusBarStyle: "default" },
   title: "오늘의 운동 코치",
   description:
     "운동 기록을 저장하면 AI가 피드백과 다음 운동 계획을 알려 주는 개인 운동 코칭 서비스",
@@ -62,6 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               />
               AI 조언은 참고용이며 의학적 진단이 아닙니다.
             </p>
+            <InstallPrompt />
           </div>
         </footer>
       </body>
