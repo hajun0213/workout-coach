@@ -11,17 +11,21 @@ function recordDay(record: Workout): number {
   return dayNumber(new Date(record.date));
 }
 
-/** 연속으로 운동한 날 수. 오늘 기록이 없어도 어제까지 이어졌다면 이어진 것으로 센다. */
+/**
+ * 연속으로 운동한 날 수. 오늘 아직 운동(또는 쉬는 날 체크인)을 안 했어도 어제까지 이어졌다면 이어진 것으로 센다.
+ * 쉬는 날 체크인한 날은 연속 일수에 더하지는 않지만 연속을 끊지도 않는다.
+ */
 export function currentDayStreak(
   records: Workout[],
   now: Date = new Date(),
+  restDays: ReadonlySet<number> = new Set(),
 ): number {
   const days = new Set(records.map(recordDay).filter((d) => !Number.isNaN(d)));
   const today = dayNumber(now);
-  let day = days.has(today) ? today : today - 1;
+  let day = days.has(today) || restDays.has(today) ? today : today - 1;
   let streak = 0;
-  while (days.has(day)) {
-    streak++;
+  while (days.has(day) || restDays.has(day)) {
+    if (days.has(day)) streak++;
     day--;
   }
   return streak;

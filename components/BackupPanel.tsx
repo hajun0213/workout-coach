@@ -22,24 +22,35 @@ export default function BackupPanel({ count }: { count: number }) {
   function handleExport() {
     const records = loadRecords();
     if (records.length === 0) return;
-    const blob = new Blob([createBackup(records)], { type: "application/json" });
+    const blob = new Blob([createBackup(records)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = `workout-records-${fileDate(new Date())}.json`;
     link.click();
     URL.revokeObjectURL(url);
-    setMessage({ tone: "ok", text: `기록 ${records.length}건을 파일로 저장했어요.` });
+    setMessage({
+      tone: "ok",
+      text: `기록 ${records.length}건을 파일로 저장했어요.`,
+    });
   }
 
   function handleSample() {
     const result = addSampleRecords();
     if (!result) {
-      setMessage({ tone: "error", text: "저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요." });
+      setMessage({
+        tone: "error",
+        text: "저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.",
+      });
     } else if (result.added === 0) {
       setMessage({ tone: "ok", text: "샘플 기록이 이미 들어 있어요." });
     } else {
-      setMessage({ tone: "ok", text: `샘플 기록 ${result.added}건을 넣었어요. 필요 없으면 "전체 삭제"로 지울 수 있어요.` });
+      setMessage({
+        tone: "ok",
+        text: `샘플 기록 ${result.added}건을 넣었어요. 필요 없으면 "전체 삭제"로 지울 수 있어요.`,
+      });
     }
   }
 
@@ -77,7 +88,10 @@ export default function BackupPanel({ count }: { count: number }) {
     }
     const result = mergeRecords(parsed.records);
     if (!result) {
-      setMessage({ tone: "error", text: "저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요." });
+      setMessage({
+        tone: "error",
+        text: "저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.",
+      });
       return;
     }
     const notes = [
@@ -97,8 +111,8 @@ export default function BackupPanel({ count }: { count: number }) {
     >
       <h2 className="text-lg font-semibold tracking-tight">기록 백업</h2>
       <p className="mt-2 text-sm leading-relaxed text-ink/60">
-        기록은 이 브라우저에만 저장돼서, 브라우저 데이터를 지우면 사라져요. 파일로
-        내보내 두면 다시 가져올 수 있어요.
+        기록은 이 브라우저에만 저장돼서, 브라우저 데이터를 지우면 사라져요.
+        파일로 내보내 두면 다시 가져올 수 있어요.
       </p>
       <div className="mt-4 flex flex-wrap gap-3">
         <button

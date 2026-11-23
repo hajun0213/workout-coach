@@ -17,6 +17,8 @@ export interface HeatCell {
   level: 0 | 1 | 2 | 3;
   /** 오늘 이후 날짜 */
   future: boolean;
+  /** 쉬는 날로 체크인한 날 (운동 기록이 없을 때만 표시) */
+  rest: boolean;
 }
 
 /**
@@ -26,6 +28,7 @@ export function buildHeatmap(
   records: Workout[],
   now: Date = new Date(),
   weeks: number = HEATMAP_WEEKS,
+  restDays: ReadonlySet<number> = new Set(),
 ): HeatCell[][] {
   const today = dayNumber(now);
   const perDay = new Map<number, { count: number; minutes: number }>();
@@ -60,6 +63,7 @@ export function buildHeatmap(
                 ? 2
                 : 3,
         future: day > today,
+        rest: entry.count === 0 && restDays.has(day),
       });
     }
     columns.push(column);

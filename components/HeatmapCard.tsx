@@ -1,4 +1,8 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
 import { HEATMAP_WEEKS, buildHeatmap } from "@/lib/achievements";
+import { getRestSnapshot, restDayNumbers, subscribeRest } from "@/lib/rest";
 import type { Workout } from "@/types/workout";
 
 // 추가 기능 — 운동 달력. 최근 12주를 한 칸이 하루인 달력으로 보여 준다. 운동한 날은 초록색, 많이 한 날일수록 진하게.
@@ -17,8 +21,20 @@ function formatMinutes(total: number): string {
   return m === 0 ? `${h}시간` : `${h}시간 ${m}분`;
 }
 
+const EMPTY_REST: string[] = [];
+
 export default function HeatmapCard({ records }: { records: Workout[] }) {
-  const columns = buildHeatmap(records);
+  const restKeys = useSyncExternalStore(
+    subscribeRest,
+    getRestSnapshot,
+    () => EMPTY_REST,
+  );
+  const columns = buildHeatmap(
+    records,
+    new Date(),
+    HEATMAP_WEEKS,
+    restDayNumbers(restKeys),
+  );
   const activeDays = columns.flat().filter((cell) => cell.count > 0).length;
 
   return (
@@ -61,16 +77,22 @@ export default function HeatmapCard({ records }: { records: Workout[] }) {
                 cell.future
                   ? cell.label
                   : cell.count === 0
-                    ? `${cell.label} · 쉬는 날`
+                    ? `${cell.label} · ${cell.rest ? "쉬는 날 체크인" : "쉬는 날"}`
                     : `${cell.label} · ${cell.count}회 · ${formatMinutes(cell.minutes)}`
               }
-              className={`aspect-square rounded-[4px] ${cell.future ? "bg-transparent" : LEVEL_CLASS[cell.level]}`}
+              className={`aspect-square rounded-[4px] ${cell.future ? "bg-transparent" : cell.rest ? "bg-cobalt/25" : LEVEL_CLASS[cell.level]}`}
             />
           ))}
         </div>
       </div>
 
       <div className="mt-3 flex items-center justify-end gap-1.5 text-[11px] text-ink/40">
+        <span
+          aria-hidden="true"
+          className="mr-2 inline-flex items-center gap-1"
+        >
+          <span className="size-3 rounded-[3px] bg-cobalt/25" /> 쉬는 날
+        </span>
         적게
         {LEVEL_CLASS.map((cls) => (
           <span

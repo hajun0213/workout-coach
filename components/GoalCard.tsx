@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { getGoalSnapshot, setWeeklyGoal, subscribeGoal } from "@/lib/goal";
+import { getRestSnapshot, restDayNumbers, subscribeRest } from "@/lib/rest";
 import {
   DEFAULT_WEEKLY_GOAL,
   MAX_WEEKLY_GOAL,
@@ -18,6 +19,8 @@ const GOAL_CHOICES = Array.from(
   (_, i) => MIN_WEEKLY_GOAL + i,
 );
 
+const EMPTY_REST: string[] = [];
+
 export default function GoalCard({ records }: { records: Workout[] }) {
   const goal = useSyncExternalStore(
     subscribeGoal,
@@ -28,7 +31,12 @@ export default function GoalCard({ records }: { records: Workout[] }) {
   const now = new Date();
   const count = thisWeekCount(records, now);
   const percent = Math.min(100, Math.round((count / goal) * 100));
-  const dayStreak = currentDayStreak(records, now);
+  const restDays = useSyncExternalStore(
+    subscribeRest,
+    getRestSnapshot,
+    () => EMPTY_REST,
+  );
+  const dayStreak = currentDayStreak(records, now, restDayNumbers(restDays));
   const weekStreak = goalWeekStreak(records, goal, now);
   const achieved = count >= goal;
 

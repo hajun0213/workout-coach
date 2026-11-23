@@ -22,11 +22,20 @@ export const LOW_CONDITION = 2; // 이 컨디션 이하를 "낮음"으로 본다
 /**
  * 지금 회복 상태를 판단한다. 기록이 하나도 없으면 null.
  * @param now 기준 시각 (테스트용으로 바꿀 수 있다)
+ * @param restToday 오늘을 "쉬는 날"로 체크인했는지. 그렇다면 회복 상태는 항상 좋음이다.
  */
 export function assessRecovery(
   records: Workout[],
   now: Date = new Date(),
+  restToday: boolean = false,
 ): RecoveryStatus | null {
+  if (restToday) {
+    return {
+      level: "good",
+      title: "오늘은 푹 쉬는 날이에요",
+      reasons: ["쉬는 것도 운동의 일부예요. 몸이 회복할 시간을 주고 있어요."],
+    };
+  }
   if (records.length === 0) return null;
   const today = dayNumber(now);
   const withAge = records
