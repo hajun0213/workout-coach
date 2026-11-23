@@ -1,7 +1,9 @@
-import type { CoachResponse } from "@/types/workout";
+import HelpfulPrompt from "@/components/HelpfulPrompt";
+import type { Workout } from "@/types/workout";
 
-// Design Ref: §3.3, §3.5 — AI 결과 카드(짙은 패널 + 주황 포인트). 입력 화면의 결과와 기록 목록이 같이 쓴다.
-export default function CoachPanel({ coach }: { coach: CoachResponse }) {
+// Design Ref: §3.3, §3.5 — AI 결과 카드(짙은 패널 + 주황 포인트). 입력 화면의 결과와 기록 목록이 같이 쓴다. 맨 아래에 "도움이 됐나요?"(14번)가 있다.
+export default function CoachPanel({ record }: { record: Workout & { coach: NonNullable<Workout["coach"]> } }) {
+  const { coach } = record;
   return (
     <div className="rounded-2xl bg-panel p-6 text-white">
       <p className="text-base leading-relaxed text-white/90">{coach.feedback}</p>
@@ -17,6 +19,7 @@ export default function CoachPanel({ coach }: { coach: CoachResponse }) {
           ))}
         </ul>
       )}
+      <HelpfulPrompt recordId={record.id} helpful={record.helpful} />
     </div>
   );
 }

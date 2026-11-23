@@ -80,7 +80,7 @@ function RecordCard({
             분석 결과 보기
           </summary>
           <div className="mt-3">
-            <CoachPanel coach={coach} />
+            <CoachPanel record={{ ...record, coach }} />
           </div>
         </details>
       ) : (

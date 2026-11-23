@@ -334,7 +334,7 @@ export default function WorkoutForm() {
 
       {phase === "done" && savedRecord?.coach && (
         <section aria-label="분석 결과" className="rise-in">
-          <CoachPanel coach={savedRecord.coach} />
+          <CoachPanel record={{ ...savedRecord, coach: savedRecord.coach }} />
           <Link
             href="/records"
             className="mt-4 inline-block text-sm font-medium text-ink/60 underline-offset-4 hover:text-ink hover:underline"
