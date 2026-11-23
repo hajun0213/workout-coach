@@ -22,6 +22,7 @@ export const SPORT_OPTIONS = [
   "등산",
   "필라테스",
   "복싱",
+  "스트레칭",
   "기타",
 ] as const;
 export const OTHER_SPORT = "기타";
@@ -69,7 +70,7 @@ export type WorkoutInput = z.infer<typeof workoutInputSchema>;
 /** 요청 본문의 최대 크기(바이트). 기록 7건은 약 2KB라 넉넉한 상한이다. */
 export const MAX_REQUEST_BYTES = 8 * 1024;
 
-const aiRecordSchema = z.object({
+export const aiRecordSchema = z.object({
   daysAgo: z.number().int().min(0).max(3650), // 방금 기록 기준 며칠 전 (10년 이내)
   minutes: workoutInputSchema.shape.minutes,
   sport: workoutInputSchema.shape.sport,
@@ -109,4 +110,35 @@ export const parseAiReplySchema = z.object({
   intensity: z.number().nullable(),
   condition: z.number().nullable(),
   pain: z.boolean().nullable(),
+});
+
+// ── 운동 전 오늘의 추천(/api/recommend) — 오늘 컨디션과 최근 기록으로 오늘 할 운동을 추천한다. ──
+export const MIN_AVAILABLE_MINUTES = 10;
+export const MAX_AVAILABLE_MINUTES = 300;
+
+export const recommendRequestSchema = z.object({
+  /** 최근 기록(최대 7건). daysAgo는 "오늘" 기준이다. */
+  records: z.array(aiRecordSchema).max(MAX_AI_RECORDS),
+  /** 마지막 기록이 15일 이상 전이면 true (오랜만에 가볍게 시작) */
+  lightStart: z.boolean(),
+  today: z.object({
+    condition: levelSchema("컨디션"),
+    pain: z.boolean(),
+    /** 오늘 쓸 수 있는 시간(분). 모르면 null */
+    availableMinutes: z
+      .number()
+      .int()
+      .min(MIN_AVAILABLE_MINUTES)
+      .max(MAX_AVAILABLE_MINUTES)
+      .nullable(),
+  }),
+});
+
+export const recommendAiReplySchema = z.object({
+  message: z.string().trim().min(1),
+  plan: z.object({
+    sport: z.string().trim().min(1).max(40),
+    minutes: z.number().int().min(MIN_MINUTES).max(MAX_MINUTES),
+    intensity: levelSchema("강도"),
+  }),
 });

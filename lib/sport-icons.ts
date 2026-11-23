@@ -18,6 +18,7 @@ const SPORT_ICONS: Record<string, string> = {
   등산: "🥾",
   필라테스: "🤸",
   복싱: "🥊",
+  스트레칭: "🙆",
   기타: "✏️",
 };
 

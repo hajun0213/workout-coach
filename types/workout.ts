@@ -47,3 +47,10 @@ export interface CoachRequest {
   records: AiRecord[];
   lightStart: boolean; // 오랜만이라 가벼운 계획을 제안해야 하면 true
 }
+
+/** 운동 전 오늘의 추천 응답 (서버 → 화면). 기록에는 저장하지 않는다. */
+export interface RecommendResponse {
+  message: string; // 추천 이유 (3문장 이내)
+  plan: CoachPlan; // 오늘 추천하는 운동
+  notices: string[]; // 안내 문구들 (강도를 낮춘 이유, 통증 상담 등)
+}
