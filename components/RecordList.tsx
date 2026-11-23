@@ -9,12 +9,13 @@ import {
   subscribeRecords,
 } from "@/lib/storage";
 import CoachPanel from "@/components/CoachPanel";
+import WeeklyChart from "@/components/WeeklyChart";
 import RetryAnalysis from "@/components/RetryAnalysis";
 import type { Workout } from "@/types/workout";
 
 // Design Ref: §3.3, §3.4 — 화면 2의 기록 목록. 최신순, 항목마다 삭제 버튼, 전체 삭제(확인 창 포함),
 // 분석 결과가 있으면 보기, 기록이 없으면 "아직 기록이 없어요".
-// 다음 작업에서 붙일 것: 주간 그래프(N1), 종목 필터(N2).
+// 다음 작업에서 붙일 것: 종목 필터(N2).
 
 // 저장 시각(ISO)을 브라우저의 시간대 기준 "2026-11-23 18:30"으로 보여 준다. (§4.1)
 function formatDate(iso: string): string {
@@ -148,7 +149,8 @@ export default function RecordList() {
 
   return (
     <div>
-      <p className="text-sm text-ink/50">총 {records.length}건 · 최신순</p>
+      <WeeklyChart records={records} />
+      <p className="mt-8 text-sm text-ink/50">총 {records.length}건 · 최신순</p>
       {error && (
         <p role="alert" className="mt-3 text-sm font-medium text-red-600">
           {error}
