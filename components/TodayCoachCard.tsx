@@ -101,7 +101,7 @@ export default function TodayCoachCard({
             샘플 기록으로 체험하기
           </button>
           <p className="text-xs text-ink/40">
-            4주치 예시 기록이 채워져요. 언제든 지울 수 있어요.
+            12주치 예시 기록이 채워져요. 언제든 지울 수 있어요.
           </p>
         </div>
       </section>
