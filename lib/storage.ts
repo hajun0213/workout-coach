@@ -1,0 +1,90 @@
+import type { Workout } from "@/types/workout";
+
+// Design Ref: §4.4 — 브라우저(localStorage)에 운동 기록을 저장·불러오기·삭제한다.
+// 로그인과 서버 저장이 없어서, 기록은 이 기기·브라우저에만 남는다.
+// 서버 화면을 그릴 때는 localStorage가 없으므로, 화면이 처음 그려진 뒤(useEffect)에 불러온다.
+
+/** 저장 이름. 저장 형태를 바꾸게 되면 v2처럼 번호를 올린다. */
+export const STORAGE_KEY = "workout-records-v1";
+
+function isLevel(value: unknown): boolean {
+  return Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 5;
+}
+
+// 저장된 값이 우리가 약속한 기록 모양인지 가볍게 확인한다. (깨졌거나 직접 고친 값이 화면을 망가뜨리지 않게)
+function isWorkout(value: unknown): value is Workout {
+  if (typeof value !== "object" || value === null) return false;
+  const w = value as Record<string, unknown>;
+  const coach = w.coach as Record<string, unknown> | undefined;
+  return (
+    typeof w.id === "string" &&
+    typeof w.date === "string" &&
+    typeof w.minutes === "number" &&
+    typeof w.sport === "string" &&
+    isLevel(w.intensity) &&
+    isLevel(w.condition) &&
+    typeof w.pain === "boolean" &&
+    (w.helpful === undefined || typeof w.helpful === "boolean") &&
+    (coach === undefined ||
+      (typeof coach === "object" &&
+        coach !== null &&
+        typeof coach.feedback === "string"))
+  );
+}
+
+// 브라우저가 아니거나, 시크릿 모드·저장 차단 등으로 접근이 막히면 null
+function getStorage(): Storage | null {
+  try {
+    return typeof window === "undefined" ? null : window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+// 저장 공간이 가득 찼거나 막혀 있으면 false → 화면이 "저장하지 못했어요"를 안내한다. (§4.4)
+function writeRecords(records: Workout[]): boolean {
+  const storage = getStorage();
+  if (!storage) return false;
+  try {
+    storage.setItem(STORAGE_KEY, JSON.stringify(records));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** 저장된 기록을 모두 불러온다. 저장된 순서(오래된 것 → 최신)이고, 없거나 깨졌으면 빈 목록이다. */
+export function loadRecords(): Workout[] {
+  const storage = getStorage();
+  if (!storage) return [];
+  try {
+    const raw = storage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(isWorkout) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** 기록 한 건을 맨 뒤(최신)에 추가한다. 저장에 성공하면 true. */
+export function addRecord(record: Workout): boolean {
+  return writeRecords([...loadRecords(), record]);
+}
+
+/** 기록 한 건을 삭제한다. 없는 번호여도 오류 없이 처리하고, 저장에 성공하면 true. */
+export function deleteRecord(id: string): boolean {
+  return writeRecords(loadRecords().filter((record) => record.id !== id));
+}
+
+/** 기록을 전체 삭제한다. 성공하면 true. (화면에서 확인 창을 거친 뒤에 부른다.) */
+export function clearRecords(): boolean {
+  const storage = getStorage();
+  if (!storage) return false;
+  try {
+    storage.removeItem(STORAGE_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
