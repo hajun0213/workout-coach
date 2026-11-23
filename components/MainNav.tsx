@@ -14,7 +14,7 @@ export default function MainNav() {
   return (
     <nav
       aria-label="주 메뉴"
-      className="flex h-12 shrink-0 items-center gap-1 whitespace-nowrap rounded-2xl bg-pill p-1.5 text-sm backdrop-blur-[14px] sm:h-14 sm:p-2 sm:text-base"
+      className="pointer-events-auto flex h-12 shrink-0 items-center gap-1 whitespace-nowrap rounded-2xl bg-pill p-1.5 text-sm shadow-[0_8px_24px_rgba(40,60,110,0.12)] backdrop-blur-[14px] sm:h-14 sm:p-2 sm:text-base"
     >
       {ITEMS.map((item) => {
         const active = pathname === item.href;

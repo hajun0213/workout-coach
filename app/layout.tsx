@@ -27,18 +27,18 @@ export const metadata: Metadata = {
     "운동 기록을 저장하면 AI가 피드백과 다음 운동 계획을 알려 주는 개인 운동 코칭 서비스",
 };
 
-// Design Ref: §3.1, §3.5 — 공통 틀. 양 끝에 떠 있는 알약형 헤더 2개(로고 / 메뉴) + 본문.
+// Design Ref: §3.1, §3.5 — 공통 틀. 양 끝에 떠 있는 알약형 헤더 2개(로고 / 메뉴) + 본문. 헤더는 화면을 내려도 맨 위에 고정된다.
 // PC 웹 화면(본문 최대 너비 max-w-5xl = 약 1024px)을 기준으로 만들고, 휴대폰(sm 미만)에서는 여백·헤더 크기를 줄인다. (§1.1, N3)
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className={`${interTight.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <header className="relative z-20">
+        <header className="pointer-events-none sticky top-0 z-40">
           <div className="mx-auto flex w-full max-w-5xl items-start justify-between gap-2 px-4 pt-4 sm:px-6 sm:pt-6">
             <Link
               href="/"
               aria-label="오늘의 운동 코치 홈"
-              className="flex h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-pill px-4 backdrop-blur-[14px] sm:h-14 sm:px-5"
+              className="pointer-events-auto flex h-12 items-center gap-2 whitespace-nowrap rounded-2xl bg-pill px-4 shadow-[0_8px_24px_rgba(40,60,110,0.12)] backdrop-blur-[14px] sm:h-14 sm:px-5"
             >
               <span className="text-base font-semibold tracking-tight sm:text-lg">
                 오늘의 운동 코치
