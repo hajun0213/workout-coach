@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import CoachPanel from "@/components/CoachPanel";
+import TodayCoachCard from "@/components/TodayCoachCard";
 import TodayRecommend from "@/components/TodayRecommend";
 import QuickInput from "@/components/QuickInput";
 import SportSelect from "@/components/SportSelect";
@@ -155,6 +156,7 @@ export default function WorkoutForm() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-8 rounded-[28px] border border-ink/10 bg-white/70 p-5 sm:p-8 shadow-[0_40px_70px_rgba(40,60,110,0.12),0_6px_14px_rgba(20,30,60,0.08)]"
     >
+      <TodayCoachCard onApply={applyQuickFill} />
       <TodayRecommend onApply={applyQuickFill} />
       <QuickInput onFill={applyQuickFill} />
 
