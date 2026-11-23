@@ -10,6 +10,8 @@
   --chip-hover: #2b3140;
   --accent: #ff5512; /* 포인트(주황): 운동의 활력 */
   --cobalt: #1430e0; /* 보조 포인트(코발트) */
+  --leaf: #22b455; /* 목표 달성·이번 주 표시(초록) */
+  --leaf-text: #15803d; /* 초록 글자 (흰 바탕에서 읽기 쉬운 진한 초록) */
 
   --background: var(--page);
   --foreground: var(--ink);
@@ -25,6 +27,8 @@
   --color-chip-hover: var(--chip-hover);
   --color-accent: var(--accent);
   --color-cobalt: var(--cobalt);
+  --color-leaf: var(--leaf);
+  --color-leaf-text: var(--leaf-text);
   /* 영문은 Inter Tight, 한글은 시스템 글꼴 (한글 웹폰트 내려받기 없음) */
   --font-sans:
     var(--font-inter-tight), "Apple SD Gothic Neo", "Malgun Gothic",

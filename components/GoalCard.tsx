@@ -77,16 +77,16 @@ export default function GoalCard({ records }: { records: Workout[] }) {
       >
         <div
           style={{ width: `${percent}%` }}
-          className={`h-full rounded-full transition-[width] ${achieved ? "bg-accent" : "bg-cobalt"}`}
+          className={`h-full rounded-full transition-[width] ${achieved ? "bg-leaf" : "bg-cobalt"}`}
         />
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2 text-sm">
         <span className="rounded-full bg-ink/5 px-3 py-1 font-medium text-ink/70">
-          연속 운동 <b className="text-accent">{dayStreak}</b>일
+          연속 운동 <b className="text-leaf-text">{dayStreak}</b>일
         </span>
         <span className="rounded-full bg-ink/5 px-3 py-1 font-medium text-ink/70">
-          목표 달성 <b className="text-accent">{weekStreak}</b>주 연속
+          목표 달성 <b className="text-leaf-text">{weekStreak}</b>주 연속
         </span>
       </div>
       {error && (

@@ -40,7 +40,7 @@ function BarGroup({
             <div
               role="presentation"
               style={{ height: `${(v.value / max) * 100}%` }}
-              className={`w-full max-w-12 rounded-t-lg ${v.current ? "bg-accent" : "bg-cobalt"} ${v.value === 0 ? "min-h-0.5 opacity-30" : "min-h-1.5"}`}
+              className={`w-full max-w-12 rounded-t-lg ${v.current ? "bg-leaf" : "bg-cobalt"} ${v.value === 0 ? "min-h-0.5 opacity-30" : "min-h-1.5"}`}
             />
             <span className="mt-1 text-xs text-ink/50">{v.label}</span>
           </li>
@@ -69,8 +69,8 @@ export default function WeeklyChart({ records }: { records: Workout[] }) {
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-lg font-semibold tracking-tight">주간 요약</h2>
         <p className="text-sm text-ink/60">
-          이번 주 <span className="font-semibold text-accent">{thisWeek.count}회</span>{" "}
-          · <span className="font-semibold text-accent">{formatMinutes(thisWeek.minutes)}</span>
+          이번 주 <span className="font-semibold text-leaf-text">{thisWeek.count}회</span>{" "}
+          · <span className="font-semibold text-leaf-text">{formatMinutes(thisWeek.minutes)}</span>
         </p>
       </div>
       <div className="mt-5 grid gap-8 sm:grid-cols-2">
