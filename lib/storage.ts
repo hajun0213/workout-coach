@@ -145,3 +145,12 @@ export function clearRecords(): boolean {
   notify();
   return true;
 }
+
+/** 기록 한 건의 일부 항목(분석 결과·도움 응답 등)을 고쳐 저장한다. 없는 번호면 false, 저장에 성공하면 true. */
+export function updateRecord(id: string, patch: Partial<Omit<Workout, "id">>): boolean {
+  const records = loadRecords();
+  if (!records.some((record) => record.id === id)) return false;
+  return writeRecords(
+    records.map((record) => (record.id === id ? { ...record, ...patch } : record)),
+  );
+}

@@ -1,6 +1,10 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import CoachPanel from "@/components/CoachPanel";
+import { ANALYSIS_FAILED_MESSAGE, analyzeRecord } from "@/lib/coach-client";
+import { addRecord, getRecordsSnapshot, subscribeRecords } from "@/lib/storage";
 import {
   MAX_SPORT_LENGTH,
   OTHER_SPORT,
@@ -11,12 +15,13 @@ import {
   type FieldErrors,
   type FieldName,
 } from "@/lib/validate";
-import type { Level } from "@/types/workout";
+import type { Level, Workout } from "@/types/workout";
 
 // Design Ref: §3.2, §3.4, §7 — 화면 1의 기록 입력 폼.
 // 운동 시간(분) / 종목(목록, 기타는 직접 입력) / 강도 1~5 / 컨디션 1~5 / 통증 체크박스.
 // PLAN 4번: 화면과 입력 받기. PLAN 5번: 입력 검사(빈 항목 안내, 0분 이하·소수 불가, 300분 초과 확인, 1440분 초과 불가).
-// 저장과 AI 분석 연결은 12번에서 한다.
+// PLAN 12번: 검사를 통과하면 기록을 저장 → AI 분석 요청 → 결과를 기록에 저장하고 아래에 보여 준다.
+// (실패 시 다시 시도 버튼은 13번, "도움이 됐나요?"는 14번)
 
 const LEVELS: Level[] = [1, 2, 3, 4, 5];
 
@@ -97,11 +102,20 @@ export default function WorkoutForm() {
   const [condition, setCondition] = useState<Level | null>(null);
   const [pain, setPain] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [passed, setPassed] = useState(false);
+  // 저장·분석 진행 상태. 분석 중에는 버튼을 막아 같은 기록을 두 번 보내지 않게 한다.
+  const [phase, setPhase] = useState<"idle" | "analyzing" | "done" | "failed">("idle");
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  // 결과는 저장된 기록에서 읽는다. (새로고침해도 기록 목록에서 같은 결과를 볼 수 있다)
+  const records = useSyncExternalStore<Workout[] | null>(
+    subscribeRecords,
+    getRecordsSnapshot,
+    () => null,
+  );
+  const savedRecord = records?.find((record) => record.id === savedId);
 
   // 고친 칸의 오류 안내는 바로 지운다.
   function clearError(field: FieldName) {
-    setPassed(false);
     setErrors((current) => {
       if (!current[field]) return current;
       const next = { ...current };
@@ -112,7 +126,8 @@ export default function WorkoutForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setPassed(false);
+    if (phase === "analyzing") return;
+    setSaveError(null);
 
     const result = validateWorkoutForm({
       minutes,
@@ -150,8 +165,28 @@ export default function WorkoutForm() {
       return;
     }
 
-    // 임시 동작: 검사를 통과했다는 것만 알려 준다. 저장과 AI 분석은 12번에서 이 자리에 연결한다.
-    setPassed(true);
+    // 1) 기록 저장 (저장 시각 = 지금). 저장이 안 되면 분석하지 않고 알려 준다.
+    const record: Workout = {
+      id: crypto.randomUUID(),
+      date: new Date().toISOString(),
+      ...result.value,
+    };
+    if (!addRecord(record)) {
+      setSaveError("저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.");
+      return;
+    }
+    setSavedId(record.id);
+    // 다음 기록을 바로 쓸 수 있게 입력을 비운다.
+    setMinutes("");
+    setSport("");
+    setCustomSport("");
+    setIntensity(null);
+    setCondition(null);
+    setPain(false);
+
+    // 2) AI 분석 → 결과를 기록에 저장. 실패해도 기록은 남는다.
+    setPhase("analyzing");
+    void analyzeRecord(record.id).then((ok) => setPhase(ok ? "done" : "failed"));
   }
 
   return (
@@ -258,7 +293,6 @@ export default function WorkoutForm() {
           checked={pain}
           onChange={(event) => {
             setPain(event.target.checked);
-            setPassed(false);
           }}
           className="size-5 accent-accent"
         />
@@ -268,17 +302,41 @@ export default function WorkoutForm() {
       <div className="flex flex-wrap items-center gap-4">
         <button
           type="submit"
-          className="btn-chip h-12 rounded-xl px-7 text-base font-medium"
+          disabled={phase === "analyzing"}
+          className="btn-chip h-12 rounded-xl px-7 text-base font-medium disabled:cursor-not-allowed disabled:opacity-50"
         >
-          저장하고 코칭 받기
+          {phase === "analyzing" ? "분석하는 중…" : "저장하고 코칭 받기"}
         </button>
-        {passed && (
+        {phase === "analyzing" && (
           <p role="status" className="text-sm text-ink/60">
-            입력 검사를 통과했어요. 저장과 AI 분석은 다음 작업에서 이 버튼에
-            연결돼요.
+            기록을 저장했어요. AI가 분석하고 있어요. (최대 10초)
           </p>
         )}
       </div>
+
+      {saveError && (
+        <p role="alert" className="text-sm font-medium text-red-600">
+          {saveError}
+        </p>
+      )}
+
+      {phase === "failed" && (
+        <p role="alert" className="text-sm font-medium text-red-600">
+          {ANALYSIS_FAILED_MESSAGE} 기록은 저장됐어요.
+        </p>
+      )}
+
+      {phase === "done" && savedRecord?.coach && (
+        <section aria-label="분석 결과" className="rise-in">
+          <CoachPanel coach={savedRecord.coach} />
+          <Link
+            href="/records"
+            className="mt-4 inline-block text-sm font-medium text-ink/60 underline-offset-4 hover:text-ink hover:underline"
+          >
+            기록 목록에서 보기
+          </Link>
+        </section>
+      )}
     </form>
   );
 }
