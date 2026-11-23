@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 import Link from "next/link";
+import MainNav from "@/components/MainNav";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -38,23 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 className="size-1.5 rounded-full bg-accent"
               />
             </Link>
-            <nav
-              aria-label="주 메뉴"
-              className="flex h-14 items-center gap-1 rounded-2xl bg-pill p-2 text-base backdrop-blur-[14px]"
-            >
-              {/* 지금 화면이 "오늘 기록"뿐이라 현재 위치 표시를 고정해 둔다. 화면이 늘면 현재 주소에 따라 바뀌게 한다. */}
-              <Link
-                href="/"
-                aria-current="page"
-                className="btn-chip rounded-xl px-4 py-2 font-medium"
-              >
-                오늘 기록
-              </Link>
-              {/* 기록 목록 화면(/records)은 작업 6번에서 만든다. 그때까지는 링크 없이 표시만 한다. */}
-              <span aria-disabled="true" className="px-4 py-2 text-ink/40">
-                기록 목록
-              </span>
-            </nav>
+            <MainNav />
           </div>
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 pt-20">

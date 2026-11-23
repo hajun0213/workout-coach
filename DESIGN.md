@@ -71,13 +71,14 @@ my-app/
 │   └── api/coach/route.ts    서버 API: AI 분석 요청 처리
 ├── components/
 │   ├── WorkoutForm.tsx       기록 입력 폼
+│   ├── MainNav.tsx           상단 메뉴 (현재 화면을 어두운 칩으로 표시)
 │   ├── CoachResult.tsx       피드백·다음 계획·만족도 버튼·다시 시도 버튼
 │   ├── RecordList.tsx        기록 목록·삭제 버튼
 │   ├── WeeklyChart.tsx       (N1) 주간 요약 그래프
 │   └── Notice.tsx            안내 문구 박스
 ├── lib/
 │   ├── schema.ts             zod 검사 규칙 (화면과 서버가 함께 사용)
-│   ├── storage.ts            브라우저 저장·불러오기·삭제
+│   ├── storage.ts            브라우저 저장·불러오기·삭제 + 변경 알림(화면이 자동으로 다시 그려짐)
 │   ├── validate.ts           입력 검사 (빈 항목, 0분 이하, 300분 초과 확인)
 │   ├── select-records.ts     AI에 보낼 기록 고르기 (최대 7건, 15일 규칙, 날짜 계산)
 │   ├── safety.ts             안전 규칙 (강도 상승 금지, 통증 시 상담 권유)
