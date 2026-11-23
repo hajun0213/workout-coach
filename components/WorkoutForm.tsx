@@ -16,6 +16,13 @@ import {
   type FieldErrors,
   type FieldName,
 } from "@/lib/validate";
+import {
+  ErrorText,
+  LevelPicker,
+  fieldBad,
+  fieldClass,
+  fieldOk,
+} from "@/components/form-parts";
 import type { Level, Workout } from "@/types/workout";
 
 // Design Ref: §3.2, §3.4, §7 — 화면 1의 기록 입력 폼.
@@ -23,76 +30,6 @@ import type { Level, Workout } from "@/types/workout";
 // PLAN 4번: 화면과 입력 받기. PLAN 5번: 입력 검사(빈 항목 안내, 0분 이하·소수 불가, 300분 초과 확인, 1440분 초과 불가).
 // PLAN 12번: 검사를 통과하면 기록을 저장 → AI 분석 요청 → 결과를 기록에 저장하고 아래에 보여 준다.
 // (실패하면 "다시 시도" 버튼 - 13번, "도움이 됐나요?"는 14번)
-
-const LEVELS: Level[] = [1, 2, 3, 4, 5];
-
-const fieldClass =
-  "h-12 w-full rounded-xl border bg-white px-4 text-base outline-none transition-colors focus-visible:ring-2";
-const fieldOk =
-  "border-ink/10 focus:border-ink/40 focus-visible:ring-accent/40";
-const fieldBad =
-  "border-red-500 focus:border-red-500 focus-visible:ring-red-500/30";
-
-function ErrorText({ id, message }: { id: string; message?: string }) {
-  if (!message) return null;
-  return (
-    <p id={id} role="alert" className="mt-2 text-sm font-medium text-red-600">
-      {message}
-    </p>
-  );
-}
-
-// 1~5단계 알약형 선택 버튼 (라디오). 선택하면 어두운 칩 색으로 바뀐다.
-function LevelPicker({
-  legend,
-  hint,
-  name,
-  value,
-  error,
-  onChange,
-}: {
-  legend: string;
-  hint: string;
-  name: string;
-  value: Level | null;
-  error?: string;
-  onChange: (level: Level) => void;
-}) {
-  const errorId = `${name}-error`;
-  return (
-    <fieldset aria-describedby={error ? errorId : undefined}>
-      <legend className="text-sm font-medium text-ink/80">{legend}</legend>
-      <div
-        role="radiogroup"
-        aria-label={legend}
-        aria-invalid={error ? true : undefined}
-        className="mt-2 flex gap-2"
-      >
-        {LEVELS.map((level) => (
-          <label key={level} className="relative cursor-pointer">
-            <input
-              type="radio"
-              name={name}
-              value={level}
-              checked={value === level}
-              onChange={() => onChange(level)}
-              className="peer sr-only"
-            />
-            <span
-              className={`flex size-12 items-center justify-center rounded-xl text-base font-medium transition-colors peer-checked:bg-chip peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-accent/60 ${
-                error ? "bg-red-50 hover:bg-red-100" : "bg-ink/5 hover:bg-ink/10"
-              }`}
-            >
-              {level}
-            </span>
-          </label>
-        ))}
-      </div>
-      <p className="mt-2 text-sm text-ink/50">{hint}</p>
-      <ErrorText id={errorId} message={error} />
-    </fieldset>
-  );
-}
 
 export default function WorkoutForm() {
   const formRef = useRef<HTMLFormElement>(null);

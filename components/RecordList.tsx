@@ -9,6 +9,7 @@ import {
   subscribeRecords,
 } from "@/lib/storage";
 import CoachPanel from "@/components/CoachPanel";
+import RecordEditor from "@/components/RecordEditor";
 import GoalCard from "@/components/GoalCard";
 import StatsPanel from "@/components/StatsPanel";
 import WeeklyChart from "@/components/WeeklyChart";
@@ -56,6 +57,7 @@ function RecordCard({
   onDelete: (record: Workout) => void;
 }) {
   const { coach } = record;
+  const [editing, setEditing] = useState(false);
   return (
     <li className="rounded-[28px] border border-ink/10 bg-white/70 p-5 sm:p-6 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)]">
       <div className="flex items-start justify-between gap-4">
@@ -70,15 +72,30 @@ function RecordCard({
             {record.pain && <Pill tone="pain">통증 있음</Pill>}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => onDelete(record)}
-          aria-label={`${formatDate(record.date)} ${record.sport} 기록 삭제`}
-          className="shrink-0 rounded-xl px-4 py-2 text-sm font-medium text-ink/60 transition-colors hover:bg-red-50 hover:text-red-600"
-        >
-          삭제
-        </button>
+        <div className="flex shrink-0 gap-1">
+          <button
+            type="button"
+            onClick={() => setEditing((value) => !value)}
+            aria-expanded={editing}
+            aria-label={`${formatDate(record.date)} ${record.sport} 기록 수정`}
+            className="rounded-xl px-4 py-2 text-sm font-medium text-ink/60 transition-colors hover:bg-ink/5 hover:text-ink"
+          >
+            수정
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete(record)}
+            aria-label={`${formatDate(record.date)} ${record.sport} 기록 삭제`}
+            className="rounded-xl px-4 py-2 text-sm font-medium text-ink/60 transition-colors hover:bg-red-50 hover:text-red-600"
+          >
+            삭제
+          </button>
+        </div>
       </div>
+
+      {editing && (
+        <RecordEditor record={record} onClose={() => setEditing(false)} />
+      )}
 
       {coach ? (
         <details className="mt-5">
