@@ -1,4 +1,5 @@
 import { AI_TIMEOUT_MS, AiFailure, requestCoach } from "@/lib/ai";
+import { applySafetyRules } from "@/lib/safety";
 import { MAX_REQUEST_BYTES, coachRequestSchema } from "@/lib/schema";
 import type { CoachResponse } from "@/types/workout";
 
@@ -7,7 +8,6 @@ import type { CoachResponse } from "@/types/workout";
 //   · 서버는 AI 응답을 8초까지만 기다린다. 넘으면 504.
 //   · 요청 내용은 로그에 남기지 않고, 오류가 나도 키·내부 정보를 응답에 넣지 않는다. (PRD §7)
 //   · AI 오류·형식 오류는 502, 시간 초과는 504. 사용자에게 보이는 문구는 둘 다 같다.
-// 안전 규칙(강도 상한·통증 상담, PLAN 11번)과 지시문 전체(10번)는 이후 작업에서 채운다.
 
 // Vercel 서버 함수의 최대 실행 시간(초). 서버가 AI를 8초에 끊고 응답할 시간을 남겨 둔다.
 // 배포 요금제의 한도와 맞는지는 PLAN 19번에서 다시 확인한다.
@@ -70,8 +70,10 @@ export async function POST(request: Request) {
   const signal = AbortSignal.any([timeout, request.signal]);
   try {
     const reply = await requestCoach(parsed.data, signal);
-    // 안내 문구(notices)는 서버가 만든다. 통증 상담 권유는 PLAN 11번에서 추가한다.
-    const body: CoachResponse = { ...reply, notices: [] };
+    // 안전 규칙(강도 상한·통증 상담·5문장)을 서버가 다시 적용한다. 쓸 수 없는 답이면 실패 처리.
+    const safe = applySafetyRules(reply, parsed.data);
+    if (!safe) throw new AiFailure("format");
+    const body: CoachResponse = safe;
     return Response.json(body, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     const failure =
