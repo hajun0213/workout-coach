@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ChangeEvent } from "react";
 import { MAX_BACKUP_BYTES, createBackup, parseBackup } from "@/lib/backup";
+import { addSampleRecords } from "@/lib/sample";
 import { loadRecords, mergeRecords } from "@/lib/storage";
 
 // 추가 기능 — 기록 백업. 기록은 이 브라우저에만 있어서, 파일로 내보내 두면 브라우저 데이터를 지워도 다시 가져올 수 있다.
@@ -29,6 +30,17 @@ export default function BackupPanel({ count }: { count: number }) {
     link.click();
     URL.revokeObjectURL(url);
     setMessage({ tone: "ok", text: `기록 ${records.length}건을 파일로 저장했어요.` });
+  }
+
+  function handleSample() {
+    const result = addSampleRecords();
+    if (!result) {
+      setMessage({ tone: "error", text: "저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요." });
+    } else if (result.added === 0) {
+      setMessage({ tone: "ok", text: "샘플 기록이 이미 들어 있어요." });
+    } else {
+      setMessage({ tone: "ok", text: `샘플 기록 ${result.added}건을 넣었어요. 필요 없으면 "전체 삭제"로 지울 수 있어요.` });
+    }
   }
 
   async function handleFile(event: ChangeEvent<HTMLInputElement>) {
@@ -103,6 +115,13 @@ export default function BackupPanel({ count }: { count: number }) {
           className="h-11 rounded-xl bg-ink/5 px-5 text-sm font-medium text-ink/80 transition-colors hover:bg-ink/10"
         >
           기록 가져오기
+        </button>
+        <button
+          type="button"
+          onClick={handleSample}
+          className="h-11 rounded-xl bg-ink/5 px-5 text-sm font-medium text-ink/80 transition-colors hover:bg-ink/10"
+        >
+          샘플 기록 불러오기
         </button>
         <input
           ref={inputRef}

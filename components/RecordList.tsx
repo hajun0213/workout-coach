@@ -11,10 +11,14 @@ import {
 import CoachPanel from "@/components/CoachPanel";
 import BackupPanel from "@/components/BackupPanel";
 import RecordEditor from "@/components/RecordEditor";
+import BadgeCard from "@/components/BadgeCard";
+import HeatmapCard from "@/components/HeatmapCard";
+import RecoveryCard from "@/components/RecoveryCard";
 import GoalCard from "@/components/GoalCard";
 import StatsPanel from "@/components/StatsPanel";
 import WeeklyChart from "@/components/WeeklyChart";
 import RetryAnalysis from "@/components/RetryAnalysis";
+import { addSampleRecords } from "@/lib/sample";
 import { sportIcon } from "@/lib/sport-icons";
 import type { Workout } from "@/types/workout";
 
@@ -174,6 +178,13 @@ export default function RecordList() {
           >
             오늘 기록하러 가기
           </Link>
+          <button
+            type="button"
+            onClick={() => addSampleRecords()}
+            className="rounded-xl bg-ink/5 px-6 py-3 text-base font-medium text-ink/80 transition-colors hover:bg-ink/10"
+          >
+            샘플 기록으로 둘러보기
+          </button>
         </div>
         {backup}
       </div>
@@ -194,9 +205,12 @@ export default function RecordList() {
     <div>
       <div>
         <div className="flex flex-col gap-6">
+          <RecoveryCard />
           <GoalCard records={records} />
+          <HeatmapCard records={records} />
           <WeeklyChart records={records} />
           <StatsPanel records={records} />
+          <BadgeCard records={records} />
         </div>
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-ink/50">
