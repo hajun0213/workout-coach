@@ -15,7 +15,7 @@ export interface WeekSummary {
 }
 
 // 달력 날짜를 하루 단위 번호로 (시각은 버림). 읽을 수 없으면 NaN.
-function dayNumber(date: Date): number {
+export function dayNumber(date: Date): number {
   if (Number.isNaN(date.getTime())) return NaN;
   return Math.round(
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86_400_000,
@@ -23,7 +23,7 @@ function dayNumber(date: Date): number {
 }
 
 // 그 날이 속한 주의 월요일 번호
-function mondayOf(day: number): number {
+export function mondayOf(day: number): number {
   // 1970-01-01(번호 0)은 목요일이라 (day + 3) % 7 이 월요일=0이 된다.
   return day - (((day + 3) % 7) + 7) % 7;
 }

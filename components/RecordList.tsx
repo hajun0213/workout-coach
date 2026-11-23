@@ -9,6 +9,8 @@ import {
   subscribeRecords,
 } from "@/lib/storage";
 import CoachPanel from "@/components/CoachPanel";
+import GoalCard from "@/components/GoalCard";
+import StatsPanel from "@/components/StatsPanel";
 import WeeklyChart from "@/components/WeeklyChart";
 import RetryAnalysis from "@/components/RetryAnalysis";
 import type { Workout } from "@/types/workout";
@@ -160,7 +162,11 @@ export default function RecordList() {
 
   return (
     <div>
-      <WeeklyChart records={records} />
+      <div className="flex flex-col gap-6">
+        <GoalCard records={records} />
+        <WeeklyChart records={records} />
+        <StatsPanel records={records} />
+      </div>
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-ink/50">
           {activeFilter === ALL_SPORTS
