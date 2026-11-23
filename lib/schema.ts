@@ -17,6 +17,9 @@ export const OTHER_SPORT = "기타";
 /** 종목 이름 최대 글자 수 (직접 입력 포함) */
 export const MAX_SPORT_LENGTH = 20;
 
+/** AI에 한 번에 보내는 기록의 최대 건수 (방금 기록 포함) */
+export const MAX_AI_RECORDS = 7;
+
 /** 운동 시간 한계(분) */
 export const MIN_MINUTES = 1;
 export const MAX_MINUTES = 1440;
