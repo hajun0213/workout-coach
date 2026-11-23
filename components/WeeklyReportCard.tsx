@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import AiLoading from "@/components/AiLoading";
 import {
   buildWeeklyReportRequest,
   getReportSnapshot,
@@ -133,7 +134,18 @@ export default function WeeklyReportCard({ records }: { records: Workout[] }) {
           {message}
         </p>
       )}
-      {report && <ReportBody report={report} />}
+      {busy && (
+        <AiLoading
+          lines={5}
+          steps={[
+            "최근 4주 기록을 읽는 중",
+            "주별 운동 흐름을 분석하는 중",
+            "다음 주 계획을 짜는 중",
+            "안전 규칙을 확인하는 중",
+          ]}
+        />
+      )}
+      {!busy && report && <ReportBody report={report} />}
     </section>
   );
 }

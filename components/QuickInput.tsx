@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AiLoading from "@/components/AiLoading";
 import { parseWorkoutText } from "@/lib/quick-input-client";
 import { hasAnyValue, type QuickFill } from "@/lib/quick-input";
 import { MAX_QUICK_TEXT } from "@/lib/schema";
@@ -84,6 +85,13 @@ export default function QuickInput({
           /{MAX_QUICK_TEXT})
         </p>
       </div>
+
+      {busy && (
+        <AiLoading
+          lines={1}
+          steps={["문장을 읽는 중", "입력 칸에 맞게 정리하는 중"]}
+        />
+      )}
 
       {result?.kind === "ok" && (
         <div role="status" className="mt-3 text-sm leading-relaxed text-ink/70">

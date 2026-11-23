@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import CoachPanel from "@/components/CoachPanel";
+import AiLoading from "@/components/AiLoading";
 import TodayCoachCard from "@/components/TodayCoachCard";
 import TodayRecommend from "@/components/TodayRecommend";
 import QuickInput from "@/components/QuickInput";
@@ -272,6 +273,17 @@ export default function WorkoutForm() {
           </p>
         )}
       </div>
+
+      {phase === "analyzing" && (
+        <AiLoading
+          steps={[
+            "기록을 저장했어요",
+            "AI가 이번 운동을 분석하는 중",
+            "다음 운동 계획을 짜는 중",
+            "안전 규칙을 확인하는 중",
+          ]}
+        />
+      )}
 
       {saveError && (
         <p role="alert" className="text-sm font-medium text-red-600">

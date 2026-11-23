@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AiLoading from "@/components/AiLoading";
 import { LevelPicker } from "@/components/form-parts";
 import { normalizeParse, type QuickFill } from "@/lib/quick-input";
 import { fetchRecommendation } from "@/lib/recommend-client";
@@ -121,6 +122,17 @@ export default function TodayRecommend({
             최근 기록(날짜·시간·종목·강도 등)만 AI로 전송돼요.
           </p>
         </div>
+
+        {busy && (
+          <AiLoading
+            lines={2}
+            steps={[
+              "오늘 컨디션을 확인하는 중",
+              "최근 기록을 살펴보는 중",
+              "오늘의 운동을 고르는 중",
+            ]}
+          />
+        )}
 
         {failed && (
           <p role="alert" className="text-sm font-medium text-red-600">
