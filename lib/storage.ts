@@ -154,3 +154,21 @@ export function updateRecord(id: string, patch: Partial<Omit<Workout, "id">>): b
     records.map((record) => (record.id === id ? { ...record, ...patch } : record)),
   );
 }
+
+/**
+ * 가져온 기록을 지금 기록에 합친다. 이미 있는 번호(id)의 기록은 건너뛰고, 저장 날짜순(오래된 것 → 최신)으로 다시 정렬한다.
+ * @returns 저장에 성공하면 { added, duplicates }, 막혀 있으면 null
+ */
+export function mergeRecords(incoming: Workout[]): { added: number; duplicates: number } | null {
+  const current = loadRecords();
+  const ids = new Set(current.map((record) => record.id));
+  const fresh = incoming.filter((record) => !ids.has(record.id));
+  if (fresh.length === 0) return { added: 0, duplicates: incoming.length };
+  const time = (record: Workout) => new Date(record.date).getTime();
+  const merged = [...current, ...fresh].sort((a, b) => {
+    const diff = time(a) - time(b);
+    return Number.isNaN(diff) ? 0 : diff;
+  });
+  if (!writeRecords(merged)) return null;
+  return { added: fresh.length, duplicates: incoming.length - fresh.length };
+}

@@ -9,6 +9,7 @@ import {
   subscribeRecords,
 } from "@/lib/storage";
 import CoachPanel from "@/components/CoachPanel";
+import BackupPanel from "@/components/BackupPanel";
 import RecordEditor from "@/components/RecordEditor";
 import GoalCard from "@/components/GoalCard";
 import StatsPanel from "@/components/StatsPanel";
@@ -150,19 +151,29 @@ export default function RecordList() {
     return <p className="text-base text-ink/50">기록을 불러오는 중이에요…</p>;
   }
 
+  // 백업 패널은 빈 화면과 목록 화면에서 같은 자리(둘째 칸)에 둬서, 가져오기 직후 화면이 바뀌어도 안내 문구가 유지된다.
+  const backup = (
+    <div className="mt-8">
+      <BackupPanel count={records.length} />
+    </div>
+  );
+
   if (records.length === 0) {
     return (
-      <div className="flex flex-col items-start gap-5 rounded-[28px] border border-ink/10 bg-white/70 p-6 sm:p-8 shadow-[0_40px_70px_rgba(40,60,110,0.12),0_6px_14px_rgba(20,30,60,0.08)]">
-        <p className="text-lg font-medium">아직 기록이 없어요</p>
-        <p className="text-base text-ink/60">
-          운동을 마친 뒤 오늘 기록을 남기면 이곳에 쌓여요.
-        </p>
-        <Link
-          href="/"
-          className="btn-chip rounded-xl px-6 py-3 text-base font-medium"
-        >
-          오늘 기록하러 가기
-        </Link>
+      <div>
+        <div className="flex flex-col items-start gap-5 rounded-[28px] border border-ink/10 bg-white/70 p-6 sm:p-8 shadow-[0_40px_70px_rgba(40,60,110,0.12),0_6px_14px_rgba(20,30,60,0.08)]">
+          <p className="text-lg font-medium">아직 기록이 없어요</p>
+          <p className="text-base text-ink/60">
+            운동을 마친 뒤 오늘 기록을 남기면 이곳에 쌓여요.
+          </p>
+          <Link
+            href="/"
+            className="btn-chip rounded-xl px-6 py-3 text-base font-medium"
+          >
+            오늘 기록하러 가기
+          </Link>
+        </div>
+        {backup}
       </div>
     );
   }
@@ -179,48 +190,51 @@ export default function RecordList() {
 
   return (
     <div>
-      <div className="flex flex-col gap-6">
-        <GoalCard records={records} />
-        <WeeklyChart records={records} />
-        <StatsPanel records={records} />
+      <div>
+        <div className="flex flex-col gap-6">
+          <GoalCard records={records} />
+          <WeeklyChart records={records} />
+          <StatsPanel records={records} />
+        </div>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-ink/50">
+            {activeFilter === ALL_SPORTS
+              ? `총 ${records.length}건`
+              : `${activeFilter} ${filtered.length}건 (전체 ${records.length}건)`}{" "}
+            · 최신순
+          </p>
+          <label className="flex items-center gap-2 text-sm text-ink/70">
+            종목 필터
+            <select
+              value={activeFilter}
+              onChange={(event) => setSportFilter(event.target.value)}
+              className="h-10 rounded-xl border border-ink/10 bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+            >
+              <option value={ALL_SPORTS}>전체</option>
+              {sports.map((sport) => (
+                <option key={sport} value={sport}>
+                  {sport}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {error && (
+          <p role="alert" className="mt-3 text-sm font-medium text-red-600">
+            {error}
+          </p>
+        )}
+        <ul className="mt-4 flex flex-col gap-4">
+          {newestFirst.map((record) => (
+            <RecordCard
+              key={record.id}
+              record={record}
+              onDelete={handleDelete}
+            />
+          ))}
+        </ul>
       </div>
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-ink/50">
-          {activeFilter === ALL_SPORTS
-            ? `총 ${records.length}건`
-            : `${activeFilter} ${filtered.length}건 (전체 ${records.length}건)`}{" "}
-          · 최신순
-        </p>
-        <label className="flex items-center gap-2 text-sm text-ink/70">
-          종목 필터
-          <select
-            value={activeFilter}
-            onChange={(event) => setSportFilter(event.target.value)}
-            className="h-10 rounded-xl border border-ink/10 bg-white px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-          >
-            <option value={ALL_SPORTS}>전체</option>
-            {sports.map((sport) => (
-              <option key={sport} value={sport}>
-                {sport}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      {error && (
-        <p role="alert" className="mt-3 text-sm font-medium text-red-600">
-          {error}
-        </p>
-      )}
-      <ul className="mt-4 flex flex-col gap-4">
-        {newestFirst.map((record) => (
-          <RecordCard
-            key={record.id}
-            record={record}
-            onDelete={handleDelete}
-          />
-        ))}
-      </ul>
+      {backup}
       <div className="mt-6 flex justify-end">
         <button
           type="button"
