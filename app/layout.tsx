@@ -55,10 +55,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <span className="text-sm font-semibold tracking-tight sm:text-lg">
                 오늘의 운동 코치
               </span>
-              <span
-                aria-hidden="true"
-                className="size-1.5 rounded-full bg-accent"
-              />
             </Link>
             <MainNav />
           </div>
