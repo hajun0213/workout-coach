@@ -32,21 +32,27 @@ function BarGroup({
   return (
     <div>
       <p className="text-sm font-medium text-ink/70">{title}</p>
-      <ul className="mt-3 flex h-36 items-end gap-3">
+      <ul className="mt-3 flex items-end gap-3">
         {values.map((v) => (
-          <li
-            key={v.key}
-            className="flex h-full flex-1 flex-col items-center justify-end gap-1"
-          >
-            <span className="text-xs font-medium text-ink/70">
-              {format(v.value)}
-            </span>
-            <div
-              role="presentation"
-              style={{ height: `${(v.value / max) * 100}%` }}
-              className={`w-full max-w-12 rounded-t-lg ${v.current ? "bg-leaf" : "bg-cobalt"} ${v.value === 0 ? "min-h-0.5 opacity-30" : "min-h-1.5"}`}
-            />
-            <span className="mt-1 text-xs text-ink/60">{v.label}</span>
+          <li key={v.key} className="flex flex-1 flex-col items-center">
+            {/* 막대 영역은 높이를 고정해 두고, 막대 높이는 (값 ÷ 최댓값)에 정확히 비례시킨다.
+                값 글자(1.5rem)를 뺀 나머지가 최댓값의 높이이고, shrink-0 으로 막대가 눌리지 않게 한다. */}
+            <div className="flex h-36 w-full flex-col items-center justify-end">
+              <span className="h-6 shrink-0 text-xs font-medium leading-6 text-ink/70">
+                {format(v.value)}
+              </span>
+              <div
+                role="presentation"
+                style={{
+                  height:
+                    v.value === 0
+                      ? "2px"
+                      : `calc((100% - 1.5rem) * ${v.value / max})`,
+                }}
+                className={`w-full max-w-12 shrink-0 rounded-t-lg ${v.current ? "bg-leaf" : "bg-cobalt"} ${v.value === 0 ? "opacity-30" : "min-h-1.5"}`}
+              />
+            </div>
+            <span className="mt-2 text-xs text-ink/60">{v.label}</span>
           </li>
         ))}
       </ul>
