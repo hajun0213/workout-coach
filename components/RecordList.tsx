@@ -77,7 +77,7 @@ function RecordCard({
     <li className="rounded-[28px] border border-ink/10 bg-surface/70 p-5 sm:p-6 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)]">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-ink/50">{formatDate(record.date)}</p>
+          <p className="text-sm text-ink/60">{formatDate(record.date)}</p>
           <p className="mt-1 text-xl font-semibold tracking-tight">
             <span aria-hidden="true">{sportIcon(record.sport)}</span>{" "}
             {record.sport} {record.minutes}분
@@ -163,7 +163,7 @@ export default function RecordList() {
   }
 
   if (records === null) {
-    return <p className="text-base text-ink/50">기록을 불러오는 중이에요…</p>;
+    return <p className="text-base text-ink/60">기록을 불러오는 중이에요…</p>;
   }
 
   // 백업 패널은 빈 화면과 목록 화면에서 같은 자리(둘째 칸)에 둬서, 가져오기 직후 화면이 바뀌어도 안내 문구가 유지된다.
@@ -226,7 +226,7 @@ export default function RecordList() {
           <BadgeCard records={records} />
         </div>
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-ink/50">
+          <p className="text-sm text-ink/60">
             {isFiltered(activeFilter)
               ? `조건에 맞는 기록 ${filtered.length}건 (전체 ${records.length}건)`
               : `총 ${records.length}건`}{" "}

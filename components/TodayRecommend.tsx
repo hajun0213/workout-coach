@@ -61,7 +61,7 @@ export default function TodayRecommend({
     <details className="group rounded-2xl bg-ink/5 p-4 sm:p-5">
       <summary className="cursor-pointer text-sm font-medium text-ink/80">
         운동 전이에요?{" "}
-        <span className="text-ink/50">오늘의 운동 추천받기 (AI)</span>
+        <span className="text-ink/60">오늘의 운동 추천받기 (AI)</span>
       </summary>
 
       <div className="mt-4 space-y-5">
@@ -118,7 +118,7 @@ export default function TodayRecommend({
           >
             {busy ? "추천하는 중…" : "오늘의 운동 추천받기"}
           </button>
-          <p className="text-xs text-ink/40">
+          <p className="text-xs text-ink/60">
             최근 기록(날짜·시간·종목·강도 등)만 AI로 전송돼요.
           </p>
         </div>

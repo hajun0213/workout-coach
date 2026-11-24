@@ -34,14 +34,14 @@ export default function BadgeCard({ records }: { records: Workout[] }) {
             </span>
             <div className="min-w-0">
               <p
-                className={`text-sm font-semibold ${badge.earned ? "text-ink" : "text-ink/50"}`}
+                className={`text-sm font-semibold ${badge.earned ? "text-ink" : "text-ink/60"}`}
               >
                 {badge.name}
                 <span className="sr-only">
                   {badge.earned ? " (획득)" : " (미획득)"}
                 </span>
               </p>
-              <p className="mt-0.5 text-xs leading-snug text-ink/50">
+              <p className="mt-0.5 text-xs leading-snug text-ink/60">
                 {badge.earned
                   ? badge.description
                   : (badge.progress ?? badge.description)}

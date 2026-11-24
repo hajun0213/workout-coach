@@ -60,12 +60,26 @@ export default function QuickInput({
     >
       <label htmlFor="quick-text" className="text-sm font-medium text-ink/80">
         한 줄로 입력하기{" "}
-        <span className="font-normal text-ink/50">(AI가 칸을 채워 줘요)</span>
+        <span className="font-normal text-ink/60">
+          (AI가 칸을 채워 줘요 · / 키로 이동, Ctrl+Enter로 채우기)
+        </span>
       </label>
       <textarea
         id="quick-text"
         value={text}
         onChange={(event) => setText(event.target.value)}
+        onKeyDown={(event) => {
+          // Ctrl(⌘)+Enter: 마우스 없이 "AI로 채우기"
+          if (
+            event.key === "Enter" &&
+            (event.ctrlKey || event.metaKey) &&
+            !busy &&
+            text.trim() !== ""
+          ) {
+            event.preventDefault();
+            handleFill();
+          }
+        }}
         maxLength={MAX_QUICK_TEXT}
         rows={2}
         placeholder={`예: ${EXAMPLE}`}
@@ -80,7 +94,7 @@ export default function QuickInput({
         >
           {busy ? "읽는 중…" : "AI로 채우기"}
         </button>
-        <p className="text-xs text-ink/40">
+        <p className="text-xs text-ink/60">
           입력한 문장은 AI로 전송돼요. 이름·연락처는 쓰지 마세요. ({text.length}
           /{MAX_QUICK_TEXT})
         </p>
@@ -100,11 +114,11 @@ export default function QuickInput({
             {result.filled.join(" · ")}
           </p>
           {result.missing.length > 0 && (
-            <p className="text-ink/50">
+            <p className="text-ink/60">
               읽지 못한 항목은 직접 골라 주세요: {result.missing.join(", ")}
             </p>
           )}
-          <p className="text-ink/50">
+          <p className="text-ink/60">
             값이 맞는지 확인하고 수정한 뒤 저장해 주세요.
           </p>
         </div>

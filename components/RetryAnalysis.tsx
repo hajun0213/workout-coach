@@ -36,7 +36,7 @@ export default function RetryAnalysis({
           {ANALYSIS_FAILED_MESSAGE}
         </p>
       ) : (
-        <p className="text-sm text-ink/40">분석 결과가 없어요</p>
+        <p className="text-sm text-ink/60">분석 결과가 없어요</p>
       )}
       <button
         type="button"

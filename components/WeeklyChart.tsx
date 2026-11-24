@@ -46,7 +46,7 @@ function BarGroup({
               style={{ height: `${(v.value / max) * 100}%` }}
               className={`w-full max-w-12 rounded-t-lg ${v.current ? "bg-leaf" : "bg-cobalt"} ${v.value === 0 ? "min-h-0.5 opacity-30" : "min-h-1.5"}`}
             />
-            <span className="mt-1 text-xs text-ink/50">{v.label}</span>
+            <span className="mt-1 text-xs text-ink/60">{v.label}</span>
           </li>
         ))}
       </ul>
@@ -95,7 +95,7 @@ export default function WeeklyChart({ records }: { records: Workout[] }) {
           format={formatMinutes}
         />
       </div>
-      <p className="mt-4 text-xs text-ink/40">
+      <p className="mt-4 text-xs text-ink/60">
         최근 4주, 월요일부터 한 주예요. 같은 날 여러 번 기록해도 모두 세요.
       </p>
     </section>

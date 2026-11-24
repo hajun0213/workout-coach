@@ -12,7 +12,7 @@
   --accent: #ff5512; /* 포인트(주황): 운동의 활력 */
   --cobalt: #1430e0; /* 보조 포인트(코발트) */
   --leaf: #22b455; /* 목표 달성·이번 주 표시(초록) */
-  --leaf-text: #15803d; /* 초록 글자 (흰 바탕에서 읽기 쉬운 진한 초록) */
+  --leaf-text: #137335; /* 초록 글자 (흰 바탕에서 읽기 쉬운 진한 초록) */
 
   --grad-top: #dbe3ee; /* 첫 화면 배경 그라데이션 */
   --grad-mid: #eef2f8;
@@ -90,6 +90,14 @@ body {
   background-repeat: no-repeat;
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+/* 키보드로 이동할 때 현재 위치가 항상 보이게: 별도 포커스 표시가 없는 링크·버튼에 기본 윤곽선을 준다. */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 2px;
 }
 
 /* 어두운 칩 버튼: 마우스를 올리면 살짝 커지며 튕기는 느낌 */

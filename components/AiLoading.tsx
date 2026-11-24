@@ -37,7 +37,7 @@ export default function AiLoading({
           className="inline-block size-2 rounded-full bg-accent motion-safe:animate-ping"
         />
         {steps[index]}
-        <span className="text-ink/40">
+        <span className="text-ink/60">
           ({index + 1}/{steps.length})
         </span>
       </p>

@@ -209,7 +209,7 @@ export default function RecordEditor({
       </label>
 
       {record.coach && (
-        <p className="text-sm text-ink/50">
+        <p className="text-sm text-ink/60">
           내용을 고치면 이전 분석 결과는 지워져요. 목록에서 &quot;다시
           시도&quot;로 새로 분석할 수 있어요.
         </p>

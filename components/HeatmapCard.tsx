@@ -54,7 +54,7 @@ export default function HeatmapCard({ records }: { records: Workout[] }) {
       <div className="mt-4 flex max-w-md gap-2">
         <div
           aria-hidden="true"
-          className="grid shrink-0 grid-rows-7 gap-1 text-[10px] leading-none text-ink/40"
+          className="grid shrink-0 grid-rows-7 gap-1 text-[10px] leading-none text-ink/60"
         >
           {DAY_NAMES.map((name, i) => (
             <span key={i} className="flex items-center">
@@ -86,7 +86,7 @@ export default function HeatmapCard({ records }: { records: Workout[] }) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-1.5 text-[11px] text-ink/40">
+      <div className="mt-3 flex items-center justify-end gap-1.5 text-[11px] text-ink/60">
         <span
           aria-hidden="true"
           className="mr-2 inline-flex items-center gap-1"

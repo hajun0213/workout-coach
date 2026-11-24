@@ -120,7 +120,7 @@ export default function RoutineCard() {
                   <span aria-hidden="true">{sportIcon(routine.sport)}</span>{" "}
                   {routine.sport} {routine.minutes}분 · 강도 {routine.intensity}
                 </p>
-                <p className="mt-0.5 text-xs text-ink/50">
+                <p className="mt-0.5 text-xs text-ink/60">
                   매주 {formatDays(routine.days)}
                 </p>
               </div>
@@ -137,7 +137,7 @@ export default function RoutineCard() {
         </ul>
       )}
       {routines.length === 0 && !open && (
-        <p className="mt-4 text-sm text-ink/50">아직 루틴이 없어요.</p>
+        <p className="mt-4 text-sm text-ink/60">아직 루틴이 없어요.</p>
       )}
 
       {open && (

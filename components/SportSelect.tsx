@@ -123,11 +123,11 @@ export default function SportSelect({
             <span className="flex-1">{value}</span>
           </>
         ) : (
-          <span className="flex-1 text-ink/40">종목을 선택하세요</span>
+          <span className="flex-1 text-ink/60">종목을 선택하세요</span>
         )}
         <span
           aria-hidden="true"
-          className={`text-xs text-ink/50 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`text-xs text-ink/60 transition-transform ${open ? "rotate-180" : ""}`}
         >
           ▼
         </span>

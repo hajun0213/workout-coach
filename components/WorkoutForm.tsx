@@ -313,7 +313,7 @@ export default function WorkoutForm() {
             failed
             onSuccess={() => setPhase("done")}
           />
-          <p className="mt-2 text-sm text-ink/50">기록은 저장됐어요.</p>
+          <p className="mt-2 text-sm text-ink/60">기록은 저장됐어요.</p>
         </div>
       )}
 

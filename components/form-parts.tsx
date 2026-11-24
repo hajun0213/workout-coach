@@ -77,12 +77,12 @@ export function LevelPicker({
         ))}
       </div>
       <div className="mt-2 flex items-center justify-between gap-3">
-        <p className="text-sm text-ink/50">{hint}</p>
+        <p className="text-sm text-ink/60">{hint}</p>
         {value !== null && (
           <button
             type="button"
             onClick={onClear}
-            className="shrink-0 text-sm text-ink/50 underline-offset-4 hover:text-ink hover:underline"
+            className="shrink-0 text-sm text-ink/60 underline-offset-4 hover:text-ink hover:underline"
           >
             선택 취소
           </button>
@@ -112,7 +112,7 @@ export function SportLabel({
         <button
           type="button"
           onClick={onClear}
-          className="text-sm text-ink/50 underline-offset-4 hover:text-ink hover:underline"
+          className="text-sm text-ink/60 underline-offset-4 hover:text-ink hover:underline"
         >
           선택 취소
         </button>

@@ -31,9 +31,9 @@ export default function HelpfulPrompt({
         aria-pressed={answered ? selected : undefined}
         className={`rounded-xl px-4 py-1.5 text-sm font-medium transition-colors disabled:cursor-default ${
           selected
-            ? "bg-accent text-white"
+            ? "bg-accent text-black"
             : answered
-              ? "bg-white/5 text-white/30"
+              ? "bg-white/5 text-white/70"
               : "bg-white/10 text-white hover:bg-white/20"
         }`}
       >

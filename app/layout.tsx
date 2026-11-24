@@ -3,6 +3,7 @@ import { Inter_Tight } from "next/font/google";
 import Link from "next/link";
 import Script from "next/script";
 import InstallPrompt from "@/components/InstallPrompt";
+import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import MainNav from "@/components/MainNav";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
@@ -45,6 +46,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
         />
+        {/* 키보드·화면 읽기 프로그램 사용자가 메뉴를 건너뛰고 본문으로 바로 가는 링크. Tab 키를 처음 누르면 나타난다. */}
+        <a
+          href="#main"
+          className="fixed -top-24 left-4 z-50 rounded-xl bg-chip px-4 py-2 text-sm font-medium text-white shadow-lg focus:top-4"
+        >
+          본문으로 건너뛰기
+        </a>
+        <KeyboardShortcuts />
         <header className="pointer-events-none sticky top-0 z-40">
           <div className="mx-auto flex w-full max-w-5xl items-start justify-between gap-2 px-4 pt-4 sm:px-6 sm:pt-6">
             <Link
@@ -59,7 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <MainNav />
           </div>
         </header>
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-12 sm:px-6 sm:pt-20">
+        <main id="main" tabIndex={-1} className="mx-auto w-full outline-none max-w-5xl flex-1 px-4 pb-16 pt-12 sm:px-6 sm:pt-20">
           {children}
         </main>
         {/* Design Ref: §3.1 — 모든 화면 아래에 항상 보이는 안내 문구 (PRD §7: 기록 보관 안내, AI 조언 안내) */}

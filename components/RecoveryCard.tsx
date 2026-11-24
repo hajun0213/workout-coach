@@ -74,7 +74,7 @@ export default function RecoveryCard() {
         >
           {restToday ? "😴 오늘 쉬는 날 · 취소" : "😴 오늘은 쉬었어요"}
         </button>
-        <p className="text-xs text-ink/40">
+        <p className="text-xs text-ink/60">
           쉬는 날을 남겨도 연속 기록은 끊기지 않아요.
         </p>
       </div>
@@ -83,7 +83,7 @@ export default function RecoveryCard() {
           저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.
         </p>
       )}
-      <p className="mt-3 text-xs text-ink/40">
+      <p className="mt-3 text-xs text-ink/60">
         최근 기록으로 계산한 참고 안내예요. 의학적 진단이 아니에요.
       </p>
     </section>

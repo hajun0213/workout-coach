@@ -116,7 +116,7 @@ function Tooltip({ point, left }: { point: TrendPoint; left: number }) {
     >
       <p className="font-semibold">
         {weekName(point.weeksAgo)}{" "}
-        <span className="font-normal text-ink/50">
+        <span className="font-normal text-ink/60">
           {point.startLabel}~{point.endLabel}
         </span>
       </p>
@@ -205,7 +205,7 @@ export default function TrendCard({ records }: { records: Workout[] }) {
                 x={PAD.left - 8}
                 y={y(level) + 4}
                 textAnchor="end"
-                className="fill-ink/40"
+                className="fill-ink/60"
                 fontSize={11}
               >
                 {level}
@@ -219,7 +219,7 @@ export default function TrendCard({ records }: { records: Workout[] }) {
                 x={x(index, points.length)}
                 y={H - 6}
                 textAnchor="middle"
-                className={shown === index ? "fill-ink" : "fill-ink/40"}
+                className={shown === index ? "fill-ink" : "fill-ink/60"}
                 fontSize={10}
               >
                 {point.startLabel}
@@ -290,7 +290,7 @@ export default function TrendCard({ records }: { records: Workout[] }) {
         </span>
         이에요.
       </p>
-      <p className="mt-2 text-xs text-ink/40">
+      <p className="mt-2 text-xs text-ink/60">
         최근 12주, 월요일부터 한 주의 평균이에요. 주를 가리키거나 누르면 세부
         수치가 보여요. 기록이 없는 주는 선이 끊겨요.
       </p>

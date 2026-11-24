@@ -48,11 +48,11 @@ export default function StatsPanel({ records }: { records: Workout[] }) {
       <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {items.map((item) => (
           <div key={item.label} className="rounded-2xl bg-ink/5 p-4">
-            <dt className="text-xs text-ink/50">{item.label}</dt>
+            <dt className="text-xs text-ink/60">{item.label}</dt>
             <dd className="mt-1 text-base font-semibold tracking-tight">
               {item.value}
             </dd>
-            {item.sub && <dd className="text-xs text-ink/40">{item.sub}</dd>}
+            {item.sub && <dd className="text-xs text-ink/60">{item.sub}</dd>}
           </div>
         ))}
       </dl>

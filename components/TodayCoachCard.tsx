@@ -100,7 +100,7 @@ export default function TodayCoachCard({
           >
             샘플 기록으로 체험하기
           </button>
-          <p className="text-xs text-ink/40">
+          <p className="text-xs text-ink/60">
             12주치 예시 기록이 채워져요. 언제든 지울 수 있어요.
           </p>
         </div>
@@ -191,7 +191,7 @@ export default function TodayCoachCard({
               {todayPlan.plan.sport ? (
                 <>
                   <p className="text-sm">
-                    <span className="text-xs text-ink/50">
+                    <span className="text-xs text-ink/60">
                       주간 리포트 · 오늘({todayPlan.day}) 계획
                     </span>
                     <br />
@@ -219,7 +219,7 @@ export default function TodayCoachCard({
                 </>
               ) : (
                 <p className="text-sm">
-                  <span className="text-xs text-ink/50">
+                  <span className="text-xs text-ink/60">
                     주간 리포트 · 오늘({todayPlan.day}) 계획
                   </span>
                   <br />
@@ -234,7 +234,7 @@ export default function TodayCoachCard({
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface/70 px-4 py-3"
             >
               <p className="text-sm">
-                <span className="text-xs text-ink/50">내 루틴</span>
+                <span className="text-xs text-ink/60">내 루틴</span>
                 <br />
                 <b>
                   <span aria-hidden="true">{sportIcon(routine.sport)}</span>{" "}

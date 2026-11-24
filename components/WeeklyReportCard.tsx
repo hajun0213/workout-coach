@@ -122,11 +122,11 @@ export default function WeeklyReportCard({ records }: { records: Workout[] }) {
         </button>
       </div>
       {!hasRecent && (
-        <p className="mt-3 text-sm text-ink/50">
+        <p className="mt-3 text-sm text-ink/60">
           최근 4주 안에 기록이 있으면 만들 수 있어요.
         </p>
       )}
-      <p className="mt-2 text-xs text-ink/40">
+      <p className="mt-2 text-xs text-ink/60">
         최근 4주 기록(날짜·시간·종목·강도 등)만 AI로 전송돼요.
       </p>
       {message && (
