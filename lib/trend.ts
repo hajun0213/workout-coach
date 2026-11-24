@@ -11,7 +11,11 @@ export interface TrendPoint {
   weeksAgo: number;
   /** 그 주 월요일의 월/일 (예: "11/17") */
   startLabel: string;
+  /** 그 주 일요일의 월/일 (예: "11/23") */
+  endLabel: string;
   count: number;
+  /** 그 주 총 운동 시간(분) */
+  minutes: number;
   /** 평균 강도(1~5, 소수 첫째 자리). 기록이 없으면 null */
   intensity: number | null;
   /** 평균 컨디션(1~5, 소수 첫째 자리). 기록이 없으면 null */
@@ -29,6 +33,7 @@ export function summarizeTrend(
   const thisMonday = mondayOf(dayNumber(now));
   const sums = Array.from({ length: weeks }, () => ({
     count: 0,
+    minutes: 0,
     intensity: 0,
     condition: 0,
   }));
@@ -39,16 +44,20 @@ export function summarizeTrend(
     if (!Number.isInteger(ago) || ago < 0 || ago >= weeks) continue; // 범위 밖
     const slot = sums[weeks - 1 - ago];
     slot.count += 1;
+    slot.minutes += record.minutes;
     slot.intensity += record.intensity;
     slot.condition += record.condition;
   }
   return sums.map((slot, index) => {
     const ago = weeks - 1 - index;
     const monday = new Date((thisMonday - ago * 7) * 86_400_000);
+    const sunday = new Date((thisMonday - ago * 7 + 6) * 86_400_000);
     return {
       weeksAgo: ago,
       startLabel: `${monday.getUTCMonth() + 1}/${monday.getUTCDate()}`,
+      endLabel: `${sunday.getUTCMonth() + 1}/${sunday.getUTCDate()}`,
       count: slot.count,
+      minutes: slot.minutes,
       intensity: slot.count ? round1(slot.intensity / slot.count) : null,
       condition: slot.count ? round1(slot.condition / slot.count) : null,
     };
