@@ -18,6 +18,7 @@ import GoalCard from "@/components/GoalCard";
 import StatsPanel from "@/components/StatsPanel";
 import RoutineCard from "@/components/RoutineCard";
 import WeeklyReportCard from "@/components/WeeklyReportCard";
+import ShareCard from "@/components/ShareCard";
 import TrendCard from "@/components/TrendCard";
 import WeeklyChart from "@/components/WeeklyChart";
 import RetryAnalysis from "@/components/RetryAnalysis";
@@ -233,6 +234,7 @@ export default function RecordList() {
           <TrendCard records={records} />
           <StatsPanel records={records} />
           <BadgeCard records={records} />
+          <ShareCard records={records} />
         </div>
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-ink/60">
