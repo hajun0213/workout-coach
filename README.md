@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 오늘의 운동 코치
 
-## Getting Started
+운동 기록을 저장하면 AI가 **피드백과 다음 운동 계획**을 알려 주는 개인 운동 코칭 웹앱이에요.
+회원가입·로그인 없이 쓰고, 기록은 **내 브라우저에만** 저장돼요.
 
-First, run the development server:
+- **접속 주소**: https://my-app-chi-navy-14.vercel.app
+- **기획서**: [PRD.md](PRD.md) · **계획서**: [PLAN.md](PLAN.md) · **설계서**: [DESIGN.md](DESIGN.md)
+
+## 어떤 문제를 푸나요?
+
+운동 기록을 메모장이나 기억에 의존하면 패턴을 보기 어렵고, 오늘 얼마나 해야 할지도 스스로 정해야 해요.
+이 앱은 기록을 한곳에 모으고, 컨디션과 통증에 맞춰 무리하지 않는 다음 운동을 제안해요.
+
+## 핵심 기능
+
+| 구분 | 기능 |
+|---|---|
+| **M1 기록** | 시간·종목·강도·컨디션·통증·한 줄 메모 저장, 최신순 목록, 수정·삭제, 입력 검사 |
+| **M2 AI 코칭** | 저장하면 10초 안에 피드백(5문장 이내)과 다음 운동 계획(종목·시간·강도) 제공 |
+| **안전 규칙** | 컨디션 2 이하나 통증이 있으면 강도를 올리지 않고, 통증이면 전문가 상담 권유. 의학적 진단은 하지 않음 |
+| **한눈에 보기** | 주간 요약 그래프, 강도·컨디션 추이 그래프, 12주 운동 달력, 종목별 통계, 배지 11종 |
+| **AI 도우미** | 한 줄 빠른 입력, 운동 전 오늘의 추천, 주간 리포트(다음 주 월~일 계획) |
+| **편의 기능** | 주간 목표·연속 기록, 휴식일 체크인, 루틴, 운동 타이머, 같은 운동 다시 기록, 종목 검색·필터 |
+| **공유·백업** | 이번 주 요약 이미지 카드(PNG), 기록 백업(JSON 내보내기·가져오기) |
+| **사용성** | 휴대폰 화면 대응, 다크 모드, 홈 화면에 앱으로 추가(PWA), 키보드 단축키·접근성 |
+
+전체 목록은 [PLAN.md](PLAN.md)의 추가 기능 A1~A32에 있어요.
+
+## 개인정보와 보안
+
+- 기록은 브라우저에만 저장되고 서버 데이터베이스는 없어요. 한 줄 메모는 AI로도 보내지 않아요.
+- AI에는 분석에 필요한 최소 정보(며칠 전·시간·종목·강도·컨디션·통증)만 보내고, 이름·연락처 같은 식별 정보는 보내지 않아요. 이메일·전화번호·주민번호·카드번호처럼 보이는 글자는 가려서 보내요.
+- OpenAI에는 대화를 저장하지 않는 옵션(`store: false`)으로 요청해요.
+- AI 키는 서버에서만 읽고 브라우저로 내려보내지 않아요. 호출은 IP당 횟수를 제한하고, AI 답에서 링크는 지워요.
+- 자세한 내용은 앱의 `/privacy` 페이지와 [PRD.md](PRD.md) 7번을 보세요.
+
+> AI 조언은 참고용이며 의학적 진단이 아니에요.
+
+## 기술 스택
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · zod · OpenAI API · Vercel 배포
+
+## 직접 실행해 보기
+
+```bash
+npm install
+```
+
+프로젝트 폴더에 `.env.local` 파일을 만들고 OpenAI 키를 넣어요. (이 파일은 저장소에 올라가지 않아요.)
+
+```bash
+OPENAI_API_KEY=여기에_본인_키
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 http://localhost:3000 을 열면 돼요. 키가 없어도 기록·그래프·샘플 체험은 되고, AI 기능만 동작하지 않아요.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 폴더 구조
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| 폴더 | 내용 |
+|---|---|
+| `app/` | 화면(홈·기록 목록·개인정보 안내)과 AI 서버 API (`app/api/`) |
+| `components/` | 화면 부품 (입력 폼, 카드, 그래프 등) |
+| `lib/` | 저장·검사·통계·AI 요청·안전 규칙 등 기능 코드 |
+| `types/` | 기록 데이터 형태 |
