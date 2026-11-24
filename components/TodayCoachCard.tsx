@@ -31,6 +31,21 @@ const DOT: Record<RecoveryLevel, string> = {
   caution: "bg-accent",
   rest: "bg-red-500",
 };
+// 처음 오신 분을 위한 3단계 안내
+const GUIDE_STEPS = [
+  {
+    title: "기록하기",
+    body: "운동을 마치면 한 줄로 적거나(예: 어제 러닝 40분, 좀 힘들었어요) 시간·종목·강도를 골라 저장해요.",
+  },
+  {
+    title: "AI 코칭 받기",
+    body: "저장하면 AI가 피드백과 다음 운동 계획을 알려 줘요. 컨디션이 낮거나 통증이 있으면 더 가볍게 짜요.",
+  },
+  {
+    title: "한 주 돌아보기",
+    body: "기록 목록에서 주간 리포트로 한 주를 돌아보고, 다음 주 계획과 목표를 세워요.",
+  },
+] as const;
 const EMPTY_STR: string[] = [];
 const EMPTY_ROUTINES: Routine[] = [];
 
@@ -68,40 +83,63 @@ export default function TodayCoachCard({
 
   if (records === null) return null; // 서버 화면과 어긋나지 않게 브라우저에서 읽은 뒤에 보여 준다.
 
-  // ── 처음 오신 분: 소개 + 샘플 체험 ──
+  // ── 처음 오신 분: 3단계 시작 안내 + 샘플 체험 ──
   if (records.length === 0 && routines.length === 0) {
     return (
       <section
-        aria-label="서비스 소개"
+        aria-label="시작 안내"
         className="rounded-2xl bg-ink/5 p-5 sm:p-6"
       >
         <p className="text-base font-semibold tracking-tight">
-          운동 전 · 후 · 한 주를 AI가 이어서 코칭해요
+          처음이세요? 3단계면 충분해요
         </p>
-        <ul className="mt-3 space-y-1.5 text-sm leading-relaxed text-ink/70">
-          <li>
-            <b className="text-ink">운동 전</b> — 오늘 컨디션으로 오늘의 운동을
-            추천받아요.
-          </li>
-          <li>
-            <b className="text-ink">운동 후</b> — 한 줄로 기록하면 피드백과 다음
-            운동 계획을 줘요.
-          </li>
-          <li>
-            <b className="text-ink">한 주</b> — 주간 리포트로 돌아보고, 다음 주
-            계획을 짜요.
-          </li>
-        </ul>
+        <ol className="mt-4 grid gap-3 sm:grid-cols-3">
+          {GUIDE_STEPS.map((step, index) => (
+            <li
+              key={step.title}
+              className="flex gap-3 rounded-xl bg-surface/70 p-4 sm:flex-col"
+            >
+              <span
+                aria-hidden="true"
+                className="flex size-7 shrink-0 items-center justify-center rounded-full bg-chip text-sm font-semibold text-white"
+              >
+                {index + 1}
+              </span>
+              <div>
+                <p className="text-sm font-semibold">{step.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink/70">
+                  {step.body}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-3 text-sm text-ink/70">
+          <b className="text-ink">운동 전이라면</b> — 아래{" "}
+          <span className="whitespace-nowrap">&quot;오늘의 운동 추천받기&quot;</span>
+          에서 오늘 컨디션에 맞는 운동을 먼저 추천받을 수 있어요.
+        </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => addSampleRecords()}
+            onClick={() => {
+              const field = document.getElementById("quick-text");
+              field?.scrollIntoView({ block: "center" });
+              field?.focus();
+            }}
             className="btn-chip h-11 rounded-xl px-5 text-sm font-medium"
+          >
+            지금 기록 시작하기
+          </button>
+          <button
+            type="button"
+            onClick={() => addSampleRecords()}
+            className="h-11 rounded-xl bg-surface/70 px-5 text-sm font-medium text-ink/80 transition-colors hover:bg-surface"
           >
             샘플 기록으로 체험하기
           </button>
           <p className="text-xs text-ink/60">
-            12주치 예시 기록이 채워져요. 언제든 지울 수 있어요.
+            샘플은 12주치 예시 기록이 채워지고, 언제든 지울 수 있어요.
           </p>
         </div>
       </section>
