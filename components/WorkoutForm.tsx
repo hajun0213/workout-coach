@@ -274,6 +274,14 @@ export default function WorkoutForm() {
         )}
       </div>
 
+      <p className="-mt-4 text-sm leading-relaxed text-ink/60">
+        저장하면 이번 기록(시간·종목·강도·컨디션·통증 여부)이 분석을 위해 AI(OpenAI)로
+        전송돼요. 이름·연락처는 종목 칸에 쓰지 마세요.{" "}
+        <Link href="/privacy" className="underline underline-offset-2">
+          개인정보 안내
+        </Link>
+      </p>
+
       {phase === "analyzing" && (
         <AiLoading
           steps={[

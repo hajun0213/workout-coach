@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { maskPersonalInfo } from "@/lib/mask";
 
 // Design Ref: §2.2, §6.2 — 입력 검사 규칙(zod). 화면(입력 폼)과 서버 API가 같은 규칙을 쓴다.
 // PRD M1 입력 검사 규칙: 운동 시간 0분 이하·소수 불가, 300분 초과(1440분 이하)는 확인 후 저장, 1440분 초과 불가.
@@ -73,7 +74,7 @@ export const MAX_REQUEST_BYTES = 8 * 1024;
 export const aiRecordSchema = z.object({
   daysAgo: z.number().int().min(0).max(3650), // 방금 기록 기준 며칠 전 (10년 이내)
   minutes: workoutInputSchema.shape.minutes,
-  sport: workoutInputSchema.shape.sport,
+  sport: workoutInputSchema.shape.sport.transform(maskPersonalInfo),
   intensity: workoutInputSchema.shape.intensity,
   condition: workoutInputSchema.shape.condition,
   pain: z.boolean(),
@@ -156,7 +157,7 @@ export const weeklyReportRequestSchema = z.object({
       z.object({
         daysAgo: z.number().int().min(0).max(27),
         minutes: workoutInputSchema.shape.minutes,
-        sport: workoutInputSchema.shape.sport,
+        sport: workoutInputSchema.shape.sport.transform(maskPersonalInfo),
         intensity: workoutInputSchema.shape.intensity,
         condition: workoutInputSchema.shape.condition,
         pain: z.boolean(),

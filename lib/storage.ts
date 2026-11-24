@@ -1,3 +1,4 @@
+import { backupRecordSchema } from "@/lib/backup";
 import type { Workout } from "@/types/workout";
 
 // Design Ref: §4.4 — 브라우저(localStorage)에 운동 기록을 저장·불러오기·삭제한다.
@@ -8,31 +9,10 @@ import type { Workout } from "@/types/workout";
 /** 저장 이름. 저장 형태를 바꾸게 되면 v2처럼 번호를 올린다. */
 export const STORAGE_KEY = "workout-records-v1";
 
-function isLevel(value: unknown): boolean {
-  return (
-    Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 5
-  );
-}
-
-// 저장된 값이 우리가 약속한 기록 모양인지 가볍게 확인한다. (깨졌거나 직접 고친 값이 화면을 망가뜨리지 않게)
+// 저장된 값이 우리가 약속한 기록 모양인지 확인한다. (깨졌거나 직접 고친 값이 화면을 망가뜨리지 않게)
+// 백업 불러오기와 같은 엄격한 규칙(분석 결과의 계획·안내 문구까지)을 쓴다.
 function isWorkout(value: unknown): value is Workout {
-  if (typeof value !== "object" || value === null) return false;
-  const w = value as Record<string, unknown>;
-  const coach = w.coach as Record<string, unknown> | undefined;
-  return (
-    typeof w.id === "string" &&
-    typeof w.date === "string" &&
-    typeof w.minutes === "number" &&
-    typeof w.sport === "string" &&
-    isLevel(w.intensity) &&
-    isLevel(w.condition) &&
-    typeof w.pain === "boolean" &&
-    (w.helpful === undefined || typeof w.helpful === "boolean") &&
-    (coach === undefined ||
-      (typeof coach === "object" &&
-        coach !== null &&
-        typeof coach.feedback === "string"))
-  );
+  return backupRecordSchema.safeParse(value).success;
 }
 
 // 저장된 글자를 기록 목록으로 바꾼다. 비었거나 깨졌으면 빈 목록이다.

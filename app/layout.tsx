@@ -78,7 +78,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 aria-hidden="true"
                 className="mt-2 size-1.5 shrink-0 rounded-full bg-accent"
               />
-              AI 조언은 참고용이며 의학적 진단이 아닙니다.
+              AI 조언은 참고용이며 의학적 진단이 아닙니다.{" "}
+              <Link href="/privacy" className="underline underline-offset-2">
+                개인정보 안내
+              </Link>
             </p>
             <InstallPrompt />
           </div>

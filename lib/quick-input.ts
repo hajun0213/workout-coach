@@ -71,10 +71,5 @@ export function hasAnyValue(fill: QuickFill): boolean {
   );
 }
 
-const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
-const PHONE = /(?<!\d)0\d{1,2}[-.\s]?\d{3,4}[-.\s]?\d{4}(?!\d)/g;
-
-/** AI로 보내기 전에 문장 속 이메일·전화번호 모양을 가린다. (이름 같은 것은 알아낼 수 없어 화면 안내로 막는다) */
-export function maskPersonalInfo(text: string): string {
-  return text.replace(EMAIL, "[이메일]").replace(PHONE, "[번호]");
-}
+// 개인정보 가리기는 lib/mask.ts로 옮겼다. 기존 import가 깨지지 않게 다시 내보낸다.
+export { maskPersonalInfo } from "@/lib/mask";

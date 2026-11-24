@@ -21,7 +21,7 @@ const coachSchema = z.object({
   notices: z.array(z.string().max(500)).max(20),
 });
 
-const backupRecordSchema = z.object({
+export const backupRecordSchema = z.object({
   id: z.string().min(1).max(100),
   date: z.string().refine((value) => !Number.isNaN(new Date(value).getTime())),
   minutes: workoutInputSchema.shape.minutes,

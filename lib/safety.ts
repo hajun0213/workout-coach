@@ -55,8 +55,21 @@ export const MAX_MESSAGE_CHARS = 450;
 // 깨진 글자(U+FFFD)나 제어 문자가 있으면 쓸 수 없는 값으로 본다.
 export const BROKEN_TEXT = /[�\u0000-\u001F\u007F]/;
 
+// AI 답 속 링크·메일 주소 모양. 입력에 끼어든 지시(프롬프트 인젝션)로 낚시 주소가 답에 들어가는 것을 막는다.
+const LINK_LIKE =
+  /(?:https?:\/\/|www\.)\S+|[\w.+-]+@[\w-]+(?:\.[\w-]+)+|[\w-]+(?:\.[\w-]+)*\.(?:com|net|org|io|kr|co|me|app|dev|xyz|link|ly)\b\S*/gi;
+
+/** AI가 쓴 글에서 링크·메일 주소 모양을 지운다. */
+export function scrubLinks(text: string): string {
+  return text.replace(LINK_LIKE, "").replace(/[ \t]{2,}/g, " ").trim();
+}
+
 export function isUsablePlan(plan: CoachPlan): boolean {
-  return plan.sport.trim().length > 0 && !BROKEN_TEXT.test(plan.sport);
+  return (
+    plan.sport.trim().length > 0 &&
+    !BROKEN_TEXT.test(plan.sport) &&
+    scrubLinks(plan.sport) === plan.sport.trim()
+  );
 }
 
 export function applySafetyRules(
@@ -65,7 +78,7 @@ export function applySafetyRules(
 ): SafeReply | null {
   if (!isUsablePlan(reply.plan)) return null;
   const feedback = capLength(
-    truncateSentences(reply.feedback, MAX_FEEDBACK_SENTENCES),
+    truncateSentences(scrubLinks(reply.feedback), MAX_FEEDBACK_SENTENCES),
     MAX_FEEDBACK_CHARS,
   );
   if (!feedback || BROKEN_TEXT.test(feedback)) return null;
@@ -134,7 +147,7 @@ export function applyRecommendSafety(
 ): RecommendResponse | null {
   if (!isUsablePlan(reply.plan)) return null;
   const message = capLength(
-    truncateSentences(reply.message, MAX_RECOMMEND_SENTENCES),
+    truncateSentences(scrubLinks(reply.message), MAX_RECOMMEND_SENTENCES),
     MAX_MESSAGE_CHARS,
   );
   if (!message || BROKEN_TEXT.test(message)) return null;

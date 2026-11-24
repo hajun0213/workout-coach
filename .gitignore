@@ -48,3 +48,7 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# bkit·Claude 작업 기록(코드가 아님)
+.bkit/
+.claude/

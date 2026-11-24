@@ -4,6 +4,7 @@ import {
   PAIN_NOTICE,
   capLength,
   isUsablePlan,
+  scrubLinks,
   truncateSentences,
 } from "@/lib/safety";
 import {
@@ -53,15 +54,16 @@ export function applyWeeklySafety(
   reply: WeeklyAiReply,
   request: WeeklyReportRequest,
 ): Omit<WeeklyReport, "createdAt"> | null {
-  const summary = truncateSentences(
-    reply.summary,
-    MAX_REPORT_SUMMARY_SENTENCES,
+  const summary = capLength(
+    truncateSentences(scrubLinks(reply.summary), MAX_REPORT_SUMMARY_SENTENCES),
+    MAX_REPORT_SUMMARY_CHARS,
   );
   if (!summary || BROKEN_TEXT.test(summary)) return null;
   const tips = reply.tips
     .filter((tip) => !BROKEN_TEXT.test(tip))
-    .slice(0, MAX_REPORT_TIPS)
-    .map((tip) => capLength(truncateSentences(tip, 1), MAX_REPORT_TIP_CHARS));
+    .map((tip) => capLength(truncateSentences(scrubLinks(tip), 1), MAX_REPORT_TIP_CHARS))
+    .filter((tip) => tip.length > 0)
+    .slice(0, MAX_REPORT_TIPS);
 
   // 7일이 월~일 한 번씩 있어야 한다.
   const byDay = new Map(reply.plan.map((entry) => [entry.day, entry]));

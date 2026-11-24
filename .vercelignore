@@ -1,0 +1,7 @@
+# 배포할 때 올리지 않을 것 (비밀 값·작업 기록·이 앱과 무관한 폴더)
+.env*
+.git
+.bkit
+.claude
+clawd-on-desk
+trash-can
