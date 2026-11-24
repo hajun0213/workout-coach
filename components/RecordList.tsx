@@ -129,6 +129,9 @@ function RecordCard({
   );
 }
 
+/** 처음에 보여 주는 기록 카드 수 */
+const INITIAL_VISIBLE = 5;
+
 export default function RecordList() {
   // 서버 화면을 그릴 때는 null(= 아직 브라우저에서 불러오지 못함)이라 서버 화면과 어긋나지 않는다. (§4.4)
   // 기록이 바뀌면(삭제·다른 탭 등) lib/storage.ts가 알려 줘서 자동으로 다시 그려진다.
@@ -139,6 +142,8 @@ export default function RecordList() {
   );
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<RecordFilter>(NO_FILTER);
+  // 기록 카드는 처음에 최근 INITIAL_VISIBLE건만 보여 주고, "더보기"를 눌렀을 때만 나머지를 펼친다.
+  const [expanded, setExpanded] = useState(false);
 
   function handleDelete(record: Workout) {
     setError(null);
@@ -210,6 +215,10 @@ export default function RecordList() {
   };
   const filtered = filterRecords(records, activeFilter);
   const newestFirst = [...filtered].reverse();
+  const hiddenCount = Math.max(0, newestFirst.length - INITIAL_VISIBLE);
+  const visibleRecords = expanded
+    ? newestFirst
+    : newestFirst.slice(0, INITIAL_VISIBLE);
 
   return (
     <div>
@@ -299,8 +308,8 @@ export default function RecordList() {
             </button>
           </div>
         )}
-        <ul className="mt-4 flex flex-col gap-4">
-          {newestFirst.map((record) => (
+        <ul id="record-cards" className="mt-4 flex flex-col gap-4">
+          {visibleRecords.map((record) => (
             <RecordCard
               key={record.id}
               record={record}
@@ -308,6 +317,19 @@ export default function RecordList() {
             />
           ))}
         </ul>
+        {hiddenCount > 0 && (
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setExpanded((prev) => !prev)}
+              aria-expanded={expanded}
+              aria-controls="record-cards"
+              className="rounded-xl bg-ink/5 px-6 py-3 text-base font-medium text-ink/80 transition-colors hover:bg-ink/10"
+            >
+              {expanded ? "숨기기" : `더보기 (${hiddenCount}건)`}
+            </button>
+          </div>
+        )}
       </div>
       {backup}
       <div className="mt-6 flex justify-end">
