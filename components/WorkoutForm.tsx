@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+} from "react";
 import CoachPanel from "@/components/CoachPanel";
 import WorkoutTimer from "@/components/WorkoutTimer";
 import AiLoading from "@/components/AiLoading";
@@ -14,7 +20,13 @@ import type { QuickFill } from "@/lib/quick-input";
 import { analyzeRecord } from "@/lib/coach-client";
 import { addRecord, getRecordsSnapshot, subscribeRecords } from "@/lib/storage";
 import { detectNewBests } from "@/lib/personal-best";
-import { MAX_SPORT_LENGTH, OTHER_SPORT, SPORT_OPTIONS } from "@/lib/schema";
+import { takeRepeatFill } from "@/lib/repeat";
+import {
+  MAX_NOTE_LENGTH,
+  MAX_SPORT_LENGTH,
+  OTHER_SPORT,
+  SPORT_OPTIONS,
+} from "@/lib/schema";
 import {
   validateWorkoutForm,
   type FieldErrors,
@@ -52,6 +64,8 @@ export default function WorkoutForm() {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [bests, setBests] = useState<string[]>([]);
+  const [note, setNote] = useState("");
+  const [repeated, setRepeated] = useState(false);
   // 결과는 저장된 기록에서 읽는다. (새로고침해도 기록 목록에서 같은 결과를 볼 수 있다)
   const records = useSyncExternalStore<Workout[] | null>(
     subscribeRecords,
@@ -85,6 +99,18 @@ export default function WorkoutForm() {
     if (fill.condition !== null) setCondition(fill.condition);
     if (fill.pain !== null) setPain(fill.pain);
   }
+
+  // 기록 목록의 "같은 운동 다시 기록"으로 넘어왔다면, 넘겨 둔 종목·시간·강도를 입력 칸에 채운다.
+  // 읽기와 채우기는 타이머 안에서 한다. (개발 모드에서 효과가 두 번 돌아도 값이 한 번만 읽히고 사라지지 않게)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const fill = takeRepeatFill();
+      if (!fill) return;
+      applyQuickFill(fill);
+      setRepeated(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -133,6 +159,7 @@ export default function WorkoutForm() {
       id: crypto.randomUUID(),
       date: new Date().toISOString(),
       ...result.value,
+      ...(note.trim() !== "" && { note: note.trim().slice(0, MAX_NOTE_LENGTH) }),
     };
     const before = records ?? [];
     if (!addRecord(record)) {
@@ -148,6 +175,8 @@ export default function WorkoutForm() {
     setIntensity(null);
     setCondition(null);
     setPain(false);
+    setNote("");
+    setRepeated(false);
 
     // 2) AI 분석 → 결과를 기록에 저장. 실패해도 기록은 남는다.
     setPhase("analyzing");
@@ -163,6 +192,15 @@ export default function WorkoutForm() {
       onSubmit={handleSubmit}
       className="flex flex-col gap-8 rounded-[28px] border border-ink/10 bg-surface/70 p-5 sm:p-8 shadow-[0_40px_70px_rgba(40,60,110,0.12),0_6px_14px_rgba(20,30,60,0.08)]"
     >
+      {repeated && (
+        <p
+          role="status"
+          className="rounded-2xl bg-cobalt/10 px-5 py-3 text-sm text-ink/80"
+        >
+          지난 기록의 종목·시간·강도를 채워 뒀어요. 오늘 컨디션을 고르고 저장해
+          주세요.
+        </p>
+      )}
       <TodayCoachCard onApply={applyQuickFill} />
       <TodayRecommend onApply={applyQuickFill} />
       <QuickInput onFill={applyQuickFill} />
@@ -269,6 +307,23 @@ export default function WorkoutForm() {
           className="size-5 accent-accent"
         />
         <span className="text-base">통증 있음</span>
+      </label>
+
+      <label className="block">
+        <span className="text-sm font-medium text-ink/80">
+          한 줄 메모{" "}
+          <span className="font-normal text-ink/60">
+            (선택 · 이 기기에만 저장되고 AI로는 보내지 않아요)
+          </span>
+        </span>
+        <input
+          type="text"
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+          maxLength={MAX_NOTE_LENGTH}
+          placeholder="예: 무릎이 살짝 뻐근했어요"
+          className={`${fieldClass} ${fieldOk} mt-2`}
+        />
       </label>
 
       <div className="flex flex-wrap items-center gap-4">

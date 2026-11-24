@@ -28,6 +28,7 @@ export interface Workout {
   intensity: Level; // 강도
   condition: Level; // 컨디션
   pain: boolean; // 통증 있음
+  note?: string; // 한 줄 메모 (이 기기에만 저장하고 AI로는 보내지 않는다)
   coach?: CoachResponse; // AI 분석 결과 (없으면 분석 전이거나 실패)
   helpful?: boolean; // "도움이 됐나요?" 응답 (누르기 전에는 없음)
 }

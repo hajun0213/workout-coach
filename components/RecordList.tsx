@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { longestRecordId } from "@/lib/personal-best";
+import { setRepeatFill } from "@/lib/repeat";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import {
   clearRecords,
@@ -67,13 +70,28 @@ function Pill({
 
 function RecordCard({
   record,
+  isLongest,
   onDelete,
 }: {
   record: Workout;
+  isLongest: boolean;
   onDelete: (record: Workout) => void;
 }) {
   const { coach } = record;
   const [editing, setEditing] = useState(false);
+  const router = useRouter();
+  // 같은 운동 다시 기록: 종목·시간·강도를 홈 입력 칸으로 넘기고 홈으로 이동한다.
+  function repeatRecord() {
+    if (
+      setRepeatFill({
+        sport: record.sport,
+        minutes: record.minutes,
+        intensity: record.intensity,
+      })
+    ) {
+      router.push("/");
+    }
+  }
   return (
     <li className="rounded-[28px] border border-ink/10 bg-surface/70 p-5 sm:p-6 shadow-[0_24px_50px_rgba(40,60,110,0.08),0_4px_10px_rgba(20,30,60,0.06)]">
       <div className="flex items-start justify-between gap-4">
@@ -87,7 +105,19 @@ function RecordCard({
             <Pill>강도 {record.intensity}</Pill>
             <Pill>컨디션 {record.condition}</Pill>
             {record.pain && <Pill tone="pain">통증 있음</Pill>}
+            {isLongest && <Pill>🏅 가장 길게 한 운동</Pill>}
           </div>
+          {record.note && (
+            <p className="mt-3 text-sm text-ink/70">📝 {record.note}</p>
+          )}
+          <button
+            type="button"
+            onClick={repeatRecord}
+            aria-label={`${record.sport} ${record.minutes}분 같은 운동 다시 기록`}
+            className="mt-3 rounded-xl bg-ink/5 px-3 py-1.5 text-sm font-medium text-ink/70 transition-colors hover:bg-ink/10 hover:text-ink"
+          >
+            ↻ 같은 운동 다시 기록
+          </button>
         </div>
         <div className="flex shrink-0 gap-1">
           <button
@@ -214,6 +244,7 @@ export default function RecordList() {
     ...filter,
     sport: sports.includes(filter.sport) ? filter.sport : ALL_SPORTS,
   };
+  const longestId = longestRecordId(records); // 전체 기록 중 가장 길게 한 운동 (카드에 🏅 표시)
   const filtered = filterRecords(records, activeFilter);
   const newestFirst = [...filtered].reverse();
   const hiddenCount = Math.max(0, newestFirst.length - INITIAL_VISIBLE);
@@ -328,6 +359,7 @@ export default function RecordList() {
             <RecordCard
               key={record.id}
               record={record}
+              isLongest={record.id === longestId}
               onDelete={handleDelete}
             />
           ))}

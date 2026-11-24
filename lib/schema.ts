@@ -29,6 +29,8 @@ export const SPORT_OPTIONS = [
 export const OTHER_SPORT = "기타";
 /** 종목 이름 최대 글자 수 (직접 입력 포함) */
 export const MAX_SPORT_LENGTH = 20;
+/** 기록 한 줄 메모의 최대 글자 수 (AI로 보내지 않고 이 기기에만 저장한다) */
+export const MAX_NOTE_LENGTH = 100;
 
 /** AI에 한 번에 보내는 기록의 최대 건수 (방금 기록 포함) */
 export const MAX_AI_RECORDS = 7;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { workoutInputSchema } from "@/lib/schema";
+import { MAX_NOTE_LENGTH, workoutInputSchema } from "@/lib/schema";
 import type { Workout } from "@/types/workout";
 
 // 추가 기능 — 기록 백업. 브라우저에만 저장되는 기록을 파일(JSON)로 내보내고 다시 가져온다.
@@ -29,6 +29,7 @@ export const backupRecordSchema = z.object({
   intensity: workoutInputSchema.shape.intensity,
   condition: workoutInputSchema.shape.condition,
   pain: z.boolean(),
+  note: z.string().max(MAX_NOTE_LENGTH).optional(),
   coach: coachSchema.optional(),
   helpful: z.boolean().optional(),
 });

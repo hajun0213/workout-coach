@@ -5,6 +5,16 @@ import type { Workout } from "@/types/workout";
 // 기록이 너무 적을 때는 "처음이라 당연히 최고"가 되므로, 이전 기록이 3건 이상일 때만 판정한다.
 export const MIN_RECORDS_FOR_BEST = 3;
 
+/** 가장 길게 운동한 기록의 id (같으면 먼저 한 것). 기록이 너무 적으면 표시하지 않으려고 null. */
+export function longestRecordId(records: Workout[]): string | null {
+  if (records.length < MIN_RECORDS_FOR_BEST) return null;
+  let best: Workout | null = null;
+  for (const r of records) {
+    if (!best || r.minutes > best.minutes) best = r;
+  }
+  return best?.id ?? null;
+}
+
 /** 새 기록을 더하기 전(before)과 더한 뒤를 비교해 새로 깬 기록의 축하 문구를 돌려준다. */
 export function detectNewBests(before: Workout[], record: Workout): string[] {
   if (before.length < MIN_RECORDS_FOR_BEST) return [];

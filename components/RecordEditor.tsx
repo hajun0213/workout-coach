@@ -9,7 +9,12 @@ import {
   fieldClass,
   fieldOk,
 } from "@/components/form-parts";
-import { MAX_SPORT_LENGTH, OTHER_SPORT, SPORT_OPTIONS } from "@/lib/schema";
+import {
+  MAX_NOTE_LENGTH,
+  MAX_SPORT_LENGTH,
+  OTHER_SPORT,
+  SPORT_OPTIONS,
+} from "@/lib/schema";
 import SportSelect from "@/components/SportSelect";
 import { updateRecord } from "@/lib/storage";
 import {
@@ -43,6 +48,7 @@ export default function RecordEditor({
   const [intensity, setIntensity] = useState<Level | null>(record.intensity);
   const [condition, setCondition] = useState<Level | null>(record.condition);
   const [pain, setPain] = useState(record.pain);
+  const [note, setNote] = useState(record.note ?? "");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [saveError, setSaveError] = useState(false);
 
@@ -81,25 +87,28 @@ export default function RecordEditor({
     }
 
     const v = result.value;
-    const unchanged =
+    const nextNote = note.trim().slice(0, MAX_NOTE_LENGTH);
+    const noteChanged = nextNote !== (record.note ?? "");
+    const workoutUnchanged =
       v.minutes === record.minutes &&
       v.sport === record.sport &&
       v.intensity === record.intensity &&
       v.condition === record.condition &&
       v.pain === record.pain;
-    if (unchanged) {
+    if (workoutUnchanged && !noteChanged) {
       onClose();
       return;
     }
-    // 내용이 바뀌었으니 이전 분석·응답은 지운다.
+    // 메모는 AI로 보내지 않으니, 메모만 바뀐 경우에는 분석 결과를 그대로 둔다.
+    // 운동 내용이 바뀐 경우에만 이전 분석·응답을 지운다.
     const ok = updateRecord(record.id, {
       minutes: v.minutes,
       sport: v.sport,
       intensity: v.intensity,
       condition: v.condition,
       pain: v.pain,
-      coach: undefined,
-      helpful: undefined,
+      note: nextNote === "" ? undefined : nextNote,
+      ...(workoutUnchanged ? {} : { coach: undefined, helpful: undefined }),
     });
     if (ok) onClose();
     else setSaveError(true);
@@ -206,6 +215,18 @@ export default function RecordEditor({
           className="size-5 accent-accent"
         />
         <span className="text-base">통증 있음</span>
+      </label>
+
+      <label className="block">
+        <span className="text-sm font-medium text-ink/80">한 줄 메모</span>
+        <input
+          type="text"
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+          maxLength={MAX_NOTE_LENGTH}
+          placeholder="예: 무릎이 살짝 뻐근했어요"
+          className={`${fieldClass} ${fieldOk} mt-2`}
+        />
       </label>
 
       {record.coach && (
