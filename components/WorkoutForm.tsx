@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import CoachPanel from "@/components/CoachPanel";
+import WorkoutTimer from "@/components/WorkoutTimer";
 import AiLoading from "@/components/AiLoading";
 import TodayCoachCard from "@/components/TodayCoachCard";
 import TodayRecommend from "@/components/TodayRecommend";
@@ -181,6 +182,12 @@ export default function WorkoutForm() {
               className={`${fieldClass} ${errors.minutes ? fieldBad : fieldOk} mt-2`}
             />
           </label>
+          <WorkoutTimer
+            onStop={(m) => {
+              setMinutes(String(m));
+              clearError("minutes");
+            }}
+          />
           <ErrorText id="minutes-error" message={errors.minutes} />
         </div>
 
