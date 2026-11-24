@@ -245,6 +245,19 @@ export default function RecordList() {
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <label className="flex items-center gap-2 text-sm text-ink/70">
+              검색
+              <input
+                type="search"
+                value={activeFilter.query}
+                onChange={(event) =>
+                  setFilter({ ...activeFilter, query: event.target.value })
+                }
+                maxLength={20}
+                placeholder="종목 이름"
+                className="h-10 w-32 rounded-xl border border-ink/10 bg-surface px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:w-40"
+              />
+            </label>
+            <label className="flex items-center gap-2 text-sm text-ink/70">
               종목
               <select
                 value={activeFilter.sport}

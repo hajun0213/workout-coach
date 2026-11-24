@@ -13,6 +13,7 @@ import RetryAnalysis from "@/components/RetryAnalysis";
 import type { QuickFill } from "@/lib/quick-input";
 import { analyzeRecord } from "@/lib/coach-client";
 import { addRecord, getRecordsSnapshot, subscribeRecords } from "@/lib/storage";
+import { detectNewBests } from "@/lib/personal-best";
 import { MAX_SPORT_LENGTH, OTHER_SPORT, SPORT_OPTIONS } from "@/lib/schema";
 import {
   validateWorkoutForm,
@@ -50,6 +51,7 @@ export default function WorkoutForm() {
   );
   const [savedId, setSavedId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [bests, setBests] = useState<string[]>([]);
   // 결과는 저장된 기록에서 읽는다. (새로고침해도 기록 목록에서 같은 결과를 볼 수 있다)
   const records = useSyncExternalStore<Workout[] | null>(
     subscribeRecords,
@@ -115,6 +117,7 @@ export default function WorkoutForm() {
     }
 
     setErrors({});
+    setBests([]);
     // 300분 초과는 저장 전에 다시 확인한다. (취소하면 입력을 그대로 두고 멈춘다.)
     if (
       result.needsConfirm &&
@@ -131,11 +134,13 @@ export default function WorkoutForm() {
       date: new Date().toISOString(),
       ...result.value,
     };
+    const before = records ?? [];
     if (!addRecord(record)) {
       setSaveError("저장하지 못했어요. 브라우저 저장 설정을 확인해 주세요.");
       return;
     }
     setSavedId(record.id);
+    setBests(detectNewBests(before, record)); // 개인 최고 기록을 깼으면 축하 문구를 보여 준다.
     // 다음 기록을 바로 쓸 수 있게 입력을 비운다.
     setMinutes("");
     setSport("");
@@ -298,6 +303,22 @@ export default function WorkoutForm() {
             "안전 규칙을 확인하는 중",
           ]}
         />
+      )}
+
+      {bests.length > 0 && (
+        <div
+          role="status"
+          className="rise-in rounded-2xl bg-leaf/15 px-5 py-4 text-sm text-ink"
+        >
+          <p className="text-base font-semibold text-leaf-text">
+            🎉 개인 최고 기록을 세웠어요!
+          </p>
+          <ul className="mt-1.5 list-inside list-disc space-y-0.5">
+            {bests.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {saveError && (

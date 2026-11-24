@@ -17,18 +17,23 @@ export interface RecordFilter {
   sport: string; // ALL_SPORTS면 전체
   period: Period;
   painOnly: boolean;
+  query: string; // 종목 이름 검색어 (빈 문자열이면 검색 안 함)
 }
 
 export const NO_FILTER: RecordFilter = {
   sport: ALL_SPORTS,
   period: "all",
   painOnly: false,
+  query: "",
 };
 
 /** 필터가 하나라도 걸려 있는지 */
 export function isFiltered(filter: RecordFilter): boolean {
   return (
-    filter.sport !== ALL_SPORTS || filter.period !== "all" || filter.painOnly
+    filter.sport !== ALL_SPORTS ||
+    filter.period !== "all" ||
+    filter.painOnly ||
+    filter.query.trim() !== ""
   );
 }
 
@@ -60,8 +65,11 @@ export function filterRecords(
   filter: RecordFilter,
   now: Date = new Date(),
 ): Workout[] {
+  // 검색어는 앞뒤 공백을 떼고 대소문자를 가리지 않고, 종목 이름에 포함되면 맞는 것으로 본다.
+  const query = filter.query.trim().toLowerCase();
   return records.filter(
     (record) =>
+      (query === "" || record.sport.toLowerCase().includes(query)) &&
       (filter.sport === ALL_SPORTS || record.sport === filter.sport) &&
       (!filter.painOnly || record.pain) &&
       inPeriod(record, filter.period, now),
