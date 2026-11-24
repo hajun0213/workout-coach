@@ -18,6 +18,7 @@ import GoalCard from "@/components/GoalCard";
 import StatsPanel from "@/components/StatsPanel";
 import RoutineCard from "@/components/RoutineCard";
 import WeeklyReportCard from "@/components/WeeklyReportCard";
+import TrendCard from "@/components/TrendCard";
 import WeeklyChart from "@/components/WeeklyChart";
 import RetryAnalysis from "@/components/RetryAnalysis";
 import { addSampleRecords } from "@/lib/sample";
@@ -220,6 +221,7 @@ export default function RecordList() {
           <RoutineCard />
           <HeatmapCard records={records} />
           <WeeklyChart records={records} />
+          <TrendCard records={records} />
           <StatsPanel records={records} />
           <BadgeCard records={records} />
         </div>
